@@ -8,7 +8,7 @@ export default class App extends React.Component {
       <div>
         <DatePicker />
         <h1 className='title'>It Works!</h1>
-        <p>Enjoy!</p>
+        <p>Enjoy!cdd</p>
       </div>
     )
   }

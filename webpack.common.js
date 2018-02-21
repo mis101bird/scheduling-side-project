@@ -16,8 +16,19 @@ const extractLess = new ExtractTextPlugin({
 
 module.exports = {
   entry: {
-    app: ['react-hot-loader/patch', './src/index.js'],
-    vendor: ['react'],
+    app: [
+      'react-hot-loader/patch',
+      './src/index.js',
+    ],
+    vendor: [
+      'antd',
+      'react',
+      'react-dom',
+      'react-redux',
+      'react-router-dom',
+      'redux',
+      'redux-thunk',
+    ],
   },
   resolve: {
     extensions: ['.js', '.jsx'],
