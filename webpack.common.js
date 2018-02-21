@@ -5,6 +5,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
+const { NODE_ENV } = process.env
+
 const extractCss = new ExtractTextPlugin({
   filename: '[name]-1.[contenthash].css',
   allChunks: true,
@@ -39,7 +41,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[chunkhash].js',
+    filename: NODE_ENV === 'production' ? '[name].[chunkhash].js' : '[name].js',
   },
   devServer: {
     historyApiFallback: true,
@@ -72,6 +74,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+    }),
     new CleanWebpackPlugin(['dist']),
     new webpack.DefinePlugin({
       API_URL: JSON.stringify(process.env.API_URL),
@@ -85,7 +90,7 @@ module.exports = {
     }]),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filename: 'vendor.[chunkhash].js',
+      filename: NODE_ENV === 'production' ? 'vendor.[chunkhash].js' : 'vendor.js',
       minChunks: Infinity,
     }),
     new webpack.NoEmitOnErrorsPlugin(),

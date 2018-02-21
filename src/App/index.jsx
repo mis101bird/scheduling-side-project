@@ -9,7 +9,6 @@ import Admin from '../pages/Admin'
 import NotFound from '../pages/NotFound'
 
 import './index.less'
-import './index.css'
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
