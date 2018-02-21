@@ -1,6 +1,6 @@
 import React from 'react'
 import { DatePicker } from 'antd'
-import 'index.less'
+import './index.less'
 
 export default class App extends React.Component {
   render() {
