@@ -1,11 +1,11 @@
 import React from 'react'
 
-export default class NotFound extends React.Component {
+export default class Home extends React.Component {
   render() {
     // console.log('match', this.props.match)
     return (
       <div>
-        <p>NotFound</p>
+        <p>Home</p>
       </div>
     )
   }
