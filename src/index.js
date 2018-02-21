@@ -1,32 +1,29 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
 import { AppContainer } from 'react-hot-loader'
 import App from './App'
-import store from './Store.js';
+import store from './Store'
 
 if (process.env.NODE_ENV !== 'production') {
-  console.log('===== Development mode =====')
+  console.log('===== Development =====') // eslint-disable-line
 } else {
-  console.log('===== Production mode =====')
+  console.log('===== Production =====') // eslint-disable-line
 }
-
-console.log(API_URL)
 
 ReactDOM.render(
   <App store={store} />,
-  document.getElementById('app')
-);
+  document.getElementById('app'),
+)
 
 // Hot Module Replacement API
 if (module.hot) {
   module.hot.accept('./App', () => {
-    const NextApp = require('./App').default;
+    const NextApp = require('./App').default // eslint-disable-line
     ReactDOM.render(
       <AppContainer>
         <NextApp store={store} />
       </AppContainer>,
-      document.getElementById('App')
-    );
-  });
+      document.getElementById('app'),
+    )
+  })
 }

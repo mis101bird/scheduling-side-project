@@ -22,6 +22,7 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "react/jsx-no-undef" : "error",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/react-in-jsx-scope": "error",
     "react/prop-types": "off",
     "react/prefer-stateless-function": "off",

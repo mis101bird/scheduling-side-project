@@ -5,6 +5,9 @@ FROM node
 # The base node image sets a very verbose log level.
 ENV NPM_CONFIG_LOGLEVEL warn
 
+# Set all environment variable
+ENV API_URL=https://www.google.com
+
 # Copy all local files into the image.
 COPY . .
 
