@@ -5,8 +5,14 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
-const extractCss = new ExtractTextPlugin('[name]-1.[contenthash].css')
-const extractLess = new ExtractTextPlugin('[name]-2.[contenthash].css')
+const extractCss = new ExtractTextPlugin({
+  filename: '[name]-1.[contenthash].css',
+  allChunks: true,
+})
+const extractLess = new ExtractTextPlugin({
+  filename: '[name]-2.[contenthash].css',
+  allChunks: true,
+})
 
 module.exports = {
   entry: {
