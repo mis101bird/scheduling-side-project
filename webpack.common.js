@@ -56,6 +56,9 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
+    new webpack.DefinePlugin({
+      API_URL: JSON.stringify(process.env.API_URL),
+    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, 'src/index.html'),
@@ -71,8 +74,5 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin(),
     extractCss,
     extractLess,
-    new webpack.DefinePlugin({
-      API_URL: JSON.stringify(process.env.API_URL),
-    }),
   ],
 }

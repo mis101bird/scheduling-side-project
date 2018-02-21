@@ -1,29 +1,21 @@
-FROM node:carbon-alpine
+# You should always specify a full version here to ensure all of your developers
+# are running the same version of Node.
+FROM node
 
-# Create app directory
-RUN apk update && apk add nginx
+# The base node image sets a very verbose log level.
+ENV NPM_CONFIG_LOGLEVEL warn
 
-WORKDIR /app/src
-COPY . /app/src
-COPY .deploy/nginx.conf /etc/nginx/nginx.conf
-ARG URL_ENV
-ARG STRIPE_KEY
-RUN mkdir /app/log
-RUN NODE_ENV=development yarn
-RUN rm .env
-ENV URL_ENV=${URL_ENV}
-ENV KAPI_URL=https://kapi${URL_ENV}.popsquare.io
-ENV API_URL=https://api${URL_ENV}.popsquare.io
-ENV STRIPE_KEY=${STRIPE_KEY}
+# Copy all local files into the image.
+COPY . .
+
+# Build for production.
 RUN npm run build
 
-EXPOSE 8000
+# Install `serve` to run the application.
+RUN npm install -g serve
 
-RUN rm -rf .git
-RUN rm -rf node_modules
-RUN rm -rf src
-RUN rm -rf public
-RUN rm -rf tests
-RUN mkdir -p /run/nginx
+# Set the command to start the node server.
+CMD serve --single dist
 
-CMD nginx -c /etc/nginx/nginx.conf
+# Tell Docker about the port we'll run on.
+EXPOSE 5000
