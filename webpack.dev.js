@@ -6,7 +6,9 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './dist',
-    cache: true,
+    historyApiFallback: true,
+    open: true,
+    inline: true,
   },
   plugins: [
     new webpack.NamedModulesPlugin(),

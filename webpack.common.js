@@ -39,7 +39,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[contenthash].js',
+    filename: '[name].[chunkhash].js',
   },
   devServer: {
     historyApiFallback: true,
@@ -85,7 +85,7 @@ module.exports = {
     }]),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filename: 'vendor.[contenthash].js',
+      filename: 'vendor.[chunkhash].js',
       minChunks: Infinity,
     }),
     new webpack.NoEmitOnErrorsPlugin(),
