@@ -11,6 +11,8 @@ if (process.env.NODE_ENV !== 'production') {
   console.log('===== Production mode =====')
 }
 
+console.log(API_URL)
+
 ReactDOM.render(
   <App store={store} />,
   document.getElementById('app')

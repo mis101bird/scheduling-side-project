@@ -71,5 +71,8 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin(),
     extractCss,
     extractLess,
+    new webpack.DefinePlugin({
+      API_URL: JSON.stringify(process.env.API_URL),
+    }),
   ],
 }
