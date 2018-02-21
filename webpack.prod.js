@@ -48,13 +48,13 @@ module.exports = merge(common, {
         test: /\.css$/,
         use: extractCss.extract({
           fallback: 'style-loader',
-          use: 'css-loader',
+          use: { loader: 'css-loader', options: { minimize: true } },
         }),
       }, {
         test: /\.less$/,
         use: extractLess.extract({
           fallback: 'style-loader',
-          use: ['css-loader', 'less-loader'],
+          use: [{ loader: 'css-loader', options: { minimize: true } }, 'less-loader'],
         }),
       },
     ],
@@ -64,6 +64,8 @@ module.exports = merge(common, {
     new CopyWebpackPlugin([{
       from: 'public/',
     }]),
+    extractCss,
+    extractLess,
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       filename: 'vendor.[chunkhash].js',
@@ -72,6 +74,7 @@ module.exports = merge(common, {
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
+      compress: true,
     }),
   ],
 })
