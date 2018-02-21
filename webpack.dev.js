@@ -3,12 +3,12 @@ const merge = require('webpack-merge')
 const common = require('./webpack.common.js')
 
 module.exports = merge(common, {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-eval-source-map',
   devServer: {
-    contentBase: './dist',
     historyApiFallback: true,
     open: true,
     inline: true,
+    contentBase: './public',
   },
   plugins: [
     new webpack.NamedModulesPlugin(),

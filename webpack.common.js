@@ -1,8 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const { NODE_ENV } = process.env
@@ -11,6 +9,7 @@ const extractCss = new ExtractTextPlugin({
   filename: '[name]-1.[contenthash].css',
   allChunks: true,
 })
+
 const extractLess = new ExtractTextPlugin({
   filename: '[name]-2.[contenthash].css',
   allChunks: true,
@@ -76,22 +75,11 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-    }),
-    new CleanWebpackPlugin(['dist']),
-    new webpack.DefinePlugin({
       API_URL: JSON.stringify(process.env.API_URL),
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, 'public/index.html'),
-    }),
-    new CopyWebpackPlugin([{
-      from: 'public/',
-    }]),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: NODE_ENV === 'production' ? 'vendor.[chunkhash].js' : 'vendor.js',
-      minChunks: Infinity,
     }),
     new webpack.NoEmitOnErrorsPlugin(),
     extractCss,

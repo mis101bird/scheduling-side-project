@@ -15,8 +15,6 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
     {...rest}
     render={(props) => {
       const accessToken = !!localStorage.getItem('access_token')
-      console.log(localStorage.getItem('access_token'))
-      console.log('access_token', accessToken)
       return (
         accessToken
         ? <Component {...props} />
