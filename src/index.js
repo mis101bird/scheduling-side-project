@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
-import Routes from './Routes'
+import App from './App'
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('===== Development =====') // eslint-disable-line
@@ -10,17 +10,17 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ReactDOM.render(
-  <Routes />,
+  <App />,
   document.getElementById('app'),
 )
 
 // Hot Module Replacement API
 if (module.hot) {
-  module.hot.accept('./Routes', () => {
-    const NextRoutes = require('./Routes').default // eslint-disable-line
+  module.hot.accept('./App', () => {
+    const NextApp = require('./App').default // eslint-disable-line
     ReactDOM.render(
       <AppContainer>
-        <NextRoutes />
+        <NextApp />
       </AppContainer>,
       document.getElementById('app'),
     )

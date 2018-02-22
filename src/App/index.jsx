@@ -1,6 +1,8 @@
 import React from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { Provider } from 'react-redux'
 import { view as Header } from '../components/Header'
+import store from '../Store'
 
 // Pages
 import Home from '../pages/Home'
@@ -27,16 +29,20 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 export default class App extends React.Component {
   render() {
     return (
-      <div>
-        <Header />
-        <Switch>
-          <Route exact path='/' component={Home} />
-          <Route path='/login' component={Login} />
-          <PrivateRoute path='/admin' component={Admin} />
-          <Route component={NotFound} />
-        </Switch>
-        <h1 className='title'>Footer</h1>
-      </div>
+      <Provider store={store}>
+        <BrowserRouter>
+          <div>
+            <Header />
+            <Switch>
+              <Route exact path='/' component={Home} />
+              <Route path='/login' component={Login} />
+              <PrivateRoute path='/admin' component={Admin} />
+              <Route component={NotFound} />
+            </Switch>
+            <h1 className='title'>Footer</h1>
+          </div>
+        </BrowserRouter>
+      </Provider>
     )
   }
 }
