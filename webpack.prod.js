@@ -41,7 +41,7 @@ module.exports = merge(common, {
       {
         test: /\.(js|jsx)$/,
         loaders: [
-          'babel-loader',
+          'babel-loader?cacheDirectory',
         ],
         exclude: /node_modules/,
       }, {
@@ -74,7 +74,12 @@ module.exports = merge(common, {
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
-      compress: true,
+      cache: true,
+      parallel: true,
+      uglifyOptions: {
+        warnings: false,
+        compress: true,
+      },
     }),
   ],
 })

@@ -21,7 +21,7 @@ module.exports = merge(common, {
       {
         test: /\.(js|jsx)$/,
         loaders: [
-          'react-hot-loader/webpack', 'babel-loader',
+          'react-hot-loader/webpack', 'babel-loader?cacheDirectory',
         ],
         exclude: /node_modules/,
       }, {
