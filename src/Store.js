@@ -1,9 +1,11 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
+import createSagaMiddleware from 'redux-saga'
+import { reducer as homeReducer } from './pages/Home'
 
 const win = window
 
 const reducer = combineReducers({
-  // reducer map
+  home: homeReducer,
 })
 
 const middlewares = []

@@ -2,10 +2,9 @@ import React from 'react'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { view as Header } from '../components/Header'
-import store from '../Store'
 
 // Pages
-import Home from '../pages/Home'
+import { view as Home } from '../pages/Home'
 import Login from '../pages/Login'
 import Admin from '../pages/Admin'
 import NotFound from '../pages/NotFound'
@@ -29,7 +28,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 export default class App extends React.Component {
   render() {
     return (
-      <Provider store={store}>
+      <Provider store={this.props.store}>
         <BrowserRouter>
           <div>
             <Header />
