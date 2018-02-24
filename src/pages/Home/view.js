@@ -2,7 +2,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Input } from 'antd'
 import PropTypes from 'prop-types'
-import { bindActionCreators } from 'redux'
 import { increment, decrement } from './actions'
 
 class Home extends React.Component {
@@ -16,7 +15,7 @@ class Home extends React.Component {
     return (
       <div>
         <Input />
-        <p>Home</p>
+        <p>Home !</p>
         <div>
           <button onClick={this.props.onIncrement}>+</button>
           <button onClick={this.props.onDecrement}>-</button>

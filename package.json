@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.js --progress --profile --colors",
-    "start": "NODE_ENV=development webpack-dev-server --config webpack.dev.js --progress --profile --colors",
+    "start": "NODE_ENV=development webpack-dev-server --config webpack.dev.js --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -15,7 +15,7 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-redux": "^5.0.6",
+    "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "redux-form": "^7.2.3",

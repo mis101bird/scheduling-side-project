@@ -2,7 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 import App from './App'
-import store from './store'
+import createStore from './store'
+
+const store = createStore()
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('===== Development =====') // eslint-disable-line
