@@ -1,12 +1,9 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
-import { reducer as home } from './pages/Home'
+import { createStore, applyMiddleware, compose } from 'redux'
+import reducer from './reducers'
 
 const win = window
 
-export default () => {
-  const reducer = combineReducers({
-    home,
-  })
+const configureStore = () => {
   const initialState = {}
 
   const middlewares = []
@@ -21,15 +18,14 @@ export default () => {
   )
 
   const store = createStore(reducer, initialState, storeEnhancers)
-  
+
   if (module.hot) {
-    module.hot.accept(() => {
-      const nextRootReducer = combineReducers({
-        home,
-      })
-      const finalReducer = { ...nextRootReducer }
-      store.replaceReducer(finalReducer)
+    module.hot.accept('./reducers', () => {
+      const nextReducer = require('./reducers').default
+      store.replaceReducer(nextReducer)
     })
   }
   return store
 }
+
+export default configureStore

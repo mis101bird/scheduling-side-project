@@ -15,11 +15,11 @@ class Home extends React.Component {
     return (
       <div>
         <Input />
-        <p>Home !</p>
+        <p>Home !nice!dede</p>
         <div>
           <button onClick={this.props.onIncrement}>+</button>
           <button onClick={this.props.onDecrement}>-</button>
-          <span>Count: {this.props.value}</span>
+          <span>dede: {this.props.value}</span>
         </div>
       </div>
     )

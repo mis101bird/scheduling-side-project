@@ -5,7 +5,7 @@ export default (state = {}, action) => {
     case INCREMENT:
       return { ...state, value: (state.value || 0) + 1 }
     case DECREMENT:
-      return { ...state, value: (state.value || 0) - 1 }
+      return { ...state, value: (state.value || 0) - 5 }
     default:
       return state
   }

@@ -1,6 +1,5 @@
 import React from 'react'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
-import { Provider } from 'react-redux'
 import { view as Header } from '../components/Header'
 
 // Pages
@@ -28,20 +27,17 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 export default class App extends React.Component {
   render() {
     return (
-      <Provider store={this.props.store}>
-        <BrowserRouter>
-          <div>
-            <Header />
-            <Switch>
-              <Route exact path='/' component={Home} />
-              <Route path='/login' component={Login} />
-              <PrivateRoute path='/admin' component={Admin} />
-              <Route component={NotFound} />
-            </Switch>
-            <h1 className='title'>Footer</h1>
-          </div>
-        </BrowserRouter>
-      </Provider>
+      <BrowserRouter>
+        <div>
+          <Header />
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route path='/login' component={Login} />
+            <PrivateRoute path='/admin' component={Admin} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
+      </BrowserRouter>
     )
   }
 }

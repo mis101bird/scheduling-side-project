@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { AppContainer } from 'react-hot-loader'
+import { Provider } from 'react-redux'
 import App from './App'
-import createStore from './store'
+import configureStore from './store'
 
-const store = createStore()
+const store = configureStore()
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('===== Development =====') // eslint-disable-line
@@ -13,7 +13,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 ReactDOM.render(
-  <App store={store} />,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById('app'),
 )
 
@@ -22,9 +24,9 @@ if (module.hot) {
   module.hot.accept('./App', () => {
     const NextApp = require('./App').default // eslint-disable-line
     ReactDOM.render(
-      <AppContainer>
-        <NextApp store={store} />
-      </AppContainer>,
+      <Provider store={store}>
+        <NextApp />
+      </Provider>,
       document.getElementById('app'),
     )
   })

@@ -11,8 +11,9 @@ module.exports = merge(common, {
   },
   devtool: 'cheap-eval-source-map',
   devServer: {
-    historyApiFallback: true,
     open: true,
+    historyApiFallback: true,
+    hot: true,
     inline: true,
     contentBase: './public',
   },
@@ -21,7 +22,7 @@ module.exports = merge(common, {
       {
         test: /\.(js|jsx)$/,
         loaders: [
-          'react-hot-loader/webpack', 'babel-loader?cacheDirectory',
+          'babel-loader',
         ],
         exclude: /node_modules/,
       }, {
@@ -34,7 +35,7 @@ module.exports = merge(common, {
     ],
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
   ],
 })
