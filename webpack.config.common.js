@@ -9,7 +9,7 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     modules: [
       path.resolve(__dirname, 'src'),
-      'node_modules',
+      path.resolve(__dirname, 'node_modules'),
     ],
   },
   module: {
@@ -31,5 +31,7 @@ module.exports = {
       filename: 'index.html',
       template: path.resolve(__dirname, 'public/index.html'),
     }),
+    // Optimize moment.js size
+    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
 }

@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { changeFormFields, login } from '../actions'
 import Form from './Form'
-import './index.less'
 
 class Login extends React.Component {
   render() {

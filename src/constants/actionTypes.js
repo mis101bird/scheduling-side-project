@@ -1,3 +1,5 @@
+export const APP_LOGIN = 'app/login'
+export const APP_LOGOUT = 'app/logout'
 export const LOGIN_CHANGE = 'login/change'
 export const LOGIN_LOADING = 'login/loading'
 export const LOGIN_SUCCESSFUL = 'login/successful'

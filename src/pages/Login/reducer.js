@@ -3,7 +3,7 @@ import {
   LOGIN_LOADING,
   LOGIN_SUCCESSFUL,
   LOGIN_FAILED,
-} from './actionTypes'
+} from '../../constants/actionTypes'
 
 export default (state = {}, action) => {
   switch (action.type) {

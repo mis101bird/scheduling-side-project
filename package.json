@@ -4,8 +4,8 @@
   "description": "React Starter Kit",
   "main": "",
   "scripts": {
-    "build": "NODE_ENV=production webpack --config webpack.prod.js --progress --profile --colors",
-    "start": "NODE_ENV=development webpack-dev-server --config webpack.dev.js --colors",
+    "build": "NODE_ENV=production webpack --config webpack.config.prod.js --progress --profile --colors",
+    "start": "NODE_ENV=development webpack-dev-server --config webpack.config.dev.js --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -32,6 +32,7 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.23.0",
     "babel-runtime": "^6.22.0",
+    "case-sensitive-paths-webpack-plugin": "^2.1.1",
     "clean-webpack-plugin": "^0.1.18",
     "copy-webpack-plugin": "^4.4.1",
     "css-loader": "^0.28.9",
@@ -45,6 +46,7 @@
     "html-webpack-plugin": "^2.26.0",
     "less": "2.7.2",
     "less-loader": "^4.0.5",
+    "react-dev-utils": "^5.0.0",
     "react-hot-loader": "^3.0.0-beta.6",
     "redux-immutable-state-invariant": "^2.1.0",
     "redux-logger": "^3.0.6",

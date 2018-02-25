@@ -20,8 +20,11 @@ class CustomisedHeader extends React.Component {
       case 'login':
         this.props.history.push('/login')
         break
-      case 'admin':
-        this.props.history.push('/admin')
+      case 'dashboard':
+        this.props.history.push('/admin/dashboard')
+        break
+      case 'profile':
+        this.props.history.push('/admin/profile')
         break
       case 'logout':
         this.props.handleAppLogOut()
@@ -43,7 +46,8 @@ class CustomisedHeader extends React.Component {
         >
           <Menu.Item key='home'>Home</Menu.Item>
           { !isLoggedIn && <Menu.Item key='login'>Login</Menu.Item> }
-          { isLoggedIn && <Menu.Item key='admin'>Admin</Menu.Item> }
+          { isLoggedIn && <Menu.Item key='dashboard'>Dashboard</Menu.Item> }
+          { isLoggedIn && <Menu.Item key='profile'>Profile</Menu.Item> }
           { isLoggedIn && <Menu.Item key='logout'>Logout</Menu.Item> }
         </Menu>
       </Header>

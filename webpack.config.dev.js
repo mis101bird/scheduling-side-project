@@ -1,6 +1,9 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const common = require('./webpack.common.js')
+const common = require('./webpack.config.common.js')
+const path = require('path')
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
+const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin')
 
 module.exports = merge(common, {
   entry: {
@@ -8,6 +11,9 @@ module.exports = merge(common, {
       'react-hot-loader/patch',
       './src/index.js',
     ],
+  },
+  output: {
+    publicPath: '/',
   },
   devtool: 'cheap-eval-source-map',
   devServer: {
@@ -36,5 +42,7 @@ module.exports = merge(common, {
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
+    new CaseSensitivePathsPlugin(),
+    new WatchMissingNodeModulesPlugin(path.resolve(__dirname, 'node_modules')),
   ],
 })

@@ -14,6 +14,10 @@ COPY . .
 # Build for production.
 RUN npm install
 RUN npm run build
+RUN rm -rf .git
+RUN rm -rf node_modules
+RUN rm -rf src
+RUN rm -rf public
 
 # Install `serve` to run the application.
 RUN npm install -g serve

@@ -1,20 +1,23 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Card } from 'antd'
-import { Redirect } from 'react-router-dom'
-import './index.less'
+import { Switch, Route, Redirect } from 'react-router-dom'
+
+import Dashboard from '../../Dashboard'
+import Profile from '../../Profile'
 
 class Admin extends React.Component {
   render() {
-    const { isLoggedIn } = this.props
+    const { isLoggedIn, match } = this.props
     if (!isLoggedIn) {
       return <Redirect to={{ pathname: '/' }} />
     }
     return (
       <div className='admin-page'>
-        <Card>
-          <p>Welcome Back!</p>
-        </Card>
+        <Switch>
+          <Route exact path={`${match.url}/`} component={() => <Redirect to={`${match.url}/dashboard`} />} />
+          <Route path={`${match.url}/dashboard`} component={Dashboard} />
+          <Route path={`${match.url}/profile`} component={Profile} />
+        </Switch>
       </div>
     )
   }

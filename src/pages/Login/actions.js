@@ -1,6 +1,5 @@
 import { message } from 'antd'
-import * as ActionTypes from './actionTypes'
-import { APP_LOGIN } from '../App/actionTypes'
+import * as ActionTypes from '../../constants/actionTypes'
 
 export const changeFormFields = (formFieldsChange) => {
   return {
@@ -15,7 +14,7 @@ export const login = values => (dispatch) => {
   window.setTimeout(() => {
     message.success('You have logged in.')
     dispatch({
-      type: APP_LOGIN,
+      type: ActionTypes.APP_LOGIN,
       email: values.email,
     })
     dispatch({ type: ActionTypes.LOGIN_SUCCESSFUL })

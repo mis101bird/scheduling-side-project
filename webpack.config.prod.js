@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
-const common = require('./webpack.common.js')
+const common = require('./webpack.config.common.js')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -28,11 +28,10 @@ module.exports = merge(common, {
       'react-redux',
       'react-router-dom',
       'redux',
-      'redux-form',
-      'redux-saga',
     ],
   },
   output: {
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[chunkhash].js',
   },
@@ -65,8 +64,6 @@ module.exports = merge(common, {
     new CopyWebpackPlugin([{
       from: 'public/',
     }]),
-    extractCss,
-    extractLess,
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       filename: 'vendor.[chunkhash].js',
@@ -82,5 +79,7 @@ module.exports = merge(common, {
         compress: true,
       },
     }),
+    extractCss,
+    extractLess,
   ],
 })

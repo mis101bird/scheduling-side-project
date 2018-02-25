@@ -2,9 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { view as App } from './pages/App'
-import configureStore from './store'
-
-const store = configureStore()
+import store from './store'
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('===== Development =====') // eslint-disable-line

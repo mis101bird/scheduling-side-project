@@ -8,7 +8,7 @@ import { view as Home } from '../../Home'
 import { view as Login } from '../../Login'
 import { view as Admin } from '../../Admin'
 import NotFound from '../../NotFound'
-import PrivateRoute from './PrivateRoute'
+import PrivateRoute from '../../../components/PrivateRoute'
 
 import './index.less'
 
@@ -23,8 +23,8 @@ export default class App extends React.Component {
           <Content>
             <Switch>
               <Route exact path='/' component={Home} />
-              <Route exact path='/login' component={Login} />
-              <PrivateRoute exact path='/admin' component={Admin} />
+              <Route path='/login' component={Login} />
+              <PrivateRoute path='/admin' component={Admin} />
               <Route component={NotFound} />
             </Switch>
           </Content>
