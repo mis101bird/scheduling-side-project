@@ -1,7 +1,6 @@
 import React from 'react'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { Layout } from 'antd'
-import { connect } from 'react-redux'
 import Header from './Header'
 
 // Pages
@@ -30,7 +29,7 @@ export default class App extends React.Component {
             </Switch>
           </Content>
           <Footer style={{ textAlign: 'center' }}>
-            by @bichenkk
+            React Starter 2018
           </Footer>
         </Layout>
       </BrowserRouter>
