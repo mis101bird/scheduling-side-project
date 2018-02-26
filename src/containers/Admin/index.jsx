@@ -1,9 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
-
-import Dashboard from '../../Dashboard'
-import Profile from '../../Profile'
+import Dashboard from '../Dashboard'
+import Profile from '../Profile'
 
 class Admin extends React.Component {
   render() {

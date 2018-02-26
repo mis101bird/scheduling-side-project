@@ -2,7 +2,7 @@ import React from 'react'
 import { Layout, Menu } from 'antd'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { logout } from '../actions'
+import { logout } from '../actions/app'
 
 const { Header } = Layout
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { view as App } from './pages/App'
+import App from './containers/App'
 import store from './store'
 
 if (process.env.NODE_ENV !== 'production') {
@@ -19,8 +19,8 @@ ReactDOM.render(
 
 // Hot Module Replacement API
 if (module.hot) {
-  module.hot.accept('./pages/App', () => {
-    const NextApp = require('./pages/App/view/index').default // eslint-disable-line
+  module.hot.accept('./containers/App', () => {
+    const NextApp = require('./containers/App').default // eslint-disable-line
     ReactDOM.render(
       <Provider store={store}>
         <NextApp />

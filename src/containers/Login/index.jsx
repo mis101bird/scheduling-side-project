@@ -2,7 +2,7 @@ import React from 'react'
 import { Card } from 'antd'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { changeFormFields, login } from '../actions'
+import { changeFormFields, sendLoginRequest } from '../../actions/login'
 import Form from './Form'
 
 class Login extends React.Component {
@@ -40,7 +40,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  handleFormOnSubmit: formValues => dispatch(login(formValues)),
+  handleFormOnSubmit: formValues => dispatch(sendLoginRequest(formValues)),
   handleFormOnFieldsChange: formFieldsChange => dispatch(changeFormFields(formFieldsChange)),
 })
 

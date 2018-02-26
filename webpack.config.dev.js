@@ -21,6 +21,7 @@ module.exports = merge(common, {
     hot: true,
     inline: true,
     contentBase: './public',
+    port: 5050,
   },
   module: {
     rules: [

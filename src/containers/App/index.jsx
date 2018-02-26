@@ -1,14 +1,14 @@
 import React from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { Layout } from 'antd'
-import Header from './Header'
+import Header from '../../components/Header'
 
 // Pages
-import { view as Home } from '../../Home'
-import { view as Login } from '../../Login'
-import { view as Admin } from '../../Admin'
-import NotFound from '../../NotFound'
-import PrivateRoute from '../../../components/PrivateRoute'
+import Home from '../Home'
+import Login from '../Login'
+import Admin from '../Admin'
+import NotFound from '../NotFound'
+import PrivateRoute from '../../components/PrivateRoute'
 
 import './index.less'
 
