@@ -1,17 +1,30 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { Card } from 'antd'
+import { Card, Layout } from 'antd'
+import iconReact from '../../assets/react.svg'
+import iconRedux from '../../assets/redux.png'
+import iconAntd from '../../assets/antd.png'
+import AppHeader from '../../components/AppHeader'
+import AppFooter from '../../components/AppFooter'
+import './index.less'
 
-class Home extends React.Component {
+const { Content } = Layout
+
+export default class Home extends React.Component {
   render() {
     return (
-      <div className='admin-page'>
-        <Card>
-          <p>Home</p>
-        </Card>
-      </div>
+      <Layout className='home-page'>
+        <AppHeader />
+        <Content>
+          <Card>
+            <h1>Welcome to React Starter.</h1>
+            <p>This is a demo project by <a href='https://github.com/bichenkk'>@bichenkk.</a></p>
+            <img height='50px' src={iconReact} alt='React' />
+            <img height='50px' src={iconRedux} alt='Redux' />
+            <img height='50px' src={iconAntd} alt='Ant Design' />
+          </Card>
+        </Content>
+        <AppFooter />
+      </Layout>
     )
   }
 }
-
-export default connect()(Home)

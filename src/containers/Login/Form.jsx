@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Icon } from 'antd'
 
 const FormItem = Form.Item
 
@@ -22,18 +22,26 @@ class LoginForm extends React.Component {
     const { getFieldDecorator } = this.props.form
     return (
       <Form onSubmit={this.handleOnSubmit}>
-        <FormItem label='Email'>
+        <FormItem>
           {getFieldDecorator('email', {
             rules: [{ required: true, type: 'email', message: 'Please input a valid email.' }],
-          })(<Input />)}
-        </FormItem>
-        <FormItem label='Password'>
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: 'Please input a valid password.' }],
-          })(<Input type='password' />)}
+          })(<Input prefix={<Icon type='mail' style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Username' />)}
         </FormItem>
         <FormItem>
-          <Button loading={this.props.isLoading} type='primary' htmlType='submit'>Login</Button>
+          {getFieldDecorator('password', {
+            rules: [{ required: true, message: 'Please input a valid password.' }],
+          })(<Input prefix={<Icon type='lock' style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Password' type='password' />)}
+        </FormItem>
+        <FormItem>
+          <Button
+            loading={this.props.isLoading}
+            type='primary'
+            htmlType='submit'
+            style={{ width: '100%' }}
+            size='large'
+          >
+            Login
+          </Button>
         </FormItem>
       </Form>
     )

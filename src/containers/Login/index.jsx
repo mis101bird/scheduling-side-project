@@ -4,6 +4,10 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { changeFormFields, sendLoginRequest } from '../../actions/login'
 import Form from './Form'
+import AppFooter from '../../components/AppFooter'
+import logoImage from '../../assets/react.svg'
+import backgroundImage from '../../assets/background.jpg'
+import './index.less'
 
 class Login extends React.Component {
   render() {
@@ -12,8 +16,21 @@ class Login extends React.Component {
       return <Redirect to={{ pathname: '/admin' }} />
     }
     return (
-      <div className='login-page'>
-        <Card>
+      <div
+        className='login-page'
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+        }}
+      >
+        <Card className='login-form'>
+          <div className='header'>
+            <img src={logoImage} height='48px' alt='React Starter' />
+            <h1>Admin Portal</h1>
+            <p>Admin Portal for React Starter</p>
+          </div>
           <Form
             onSubmit={this.props.handleFormOnSubmit}
             onFieldsChange={this.props.handleFormOnFieldsChange}
@@ -21,6 +38,7 @@ class Login extends React.Component {
             isLoading={this.props.isLoading}
           />
         </Card>
+        <AppFooter />
       </div>
     )
   }
