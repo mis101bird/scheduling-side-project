@@ -2,14 +2,15 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Card } from 'antd'
 import AdminLayout from '../components/AdminLayout'
+import SectionContent from '../components/SectionContent'
 
 class Dashboard extends React.Component {
   render() {
     return (
       <AdminLayout>
-        <Card>
+        <SectionContent>
           <p>Dashboard</p>
-        </Card>
+        </SectionContent>
       </AdminLayout>
     )
   }

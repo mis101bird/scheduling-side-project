@@ -18,6 +18,9 @@ class CustomisedHeader extends React.Component {
       case 'login':
         this.props.history.push('/login')
         break
+      case 'admin':
+        this.props.history.push('/admin')
+        break
       case 'logout': {
         const handleAppLogOut = () => { this.props.handleAppLogOut() }
         Modal.confirm({
@@ -25,6 +28,7 @@ class CustomisedHeader extends React.Component {
           content: 'Are you sure you want to log out?',
           onOk() {
             handleAppLogOut()
+            this.props.history.push('/login')
           },
           onCancel() {
             // console.log('Cancel')
@@ -51,6 +55,7 @@ class CustomisedHeader extends React.Component {
           onClick={this.handleMenuItemOnClick}
         >
           { !isLoggedIn && <Menu.Item key='login'>Login</Menu.Item> }
+          { isLoggedIn && <Menu.Item key='admin'>Admin</Menu.Item> }
           { isLoggedIn && <Menu.Item key='logout'>Logout</Menu.Item> }
         </Menu>
       </Header>
