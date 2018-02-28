@@ -64,7 +64,7 @@ class Admin extends React.Component {
                 <span>Dashboard</span>
               </Menu.Item>
             </SubMenu>
-            <Menu.Item key='profile'>
+            <Menu.Item key='users'>
               <Icon type='user' /><span>Users</span>
             </Menu.Item>
           </Menu>

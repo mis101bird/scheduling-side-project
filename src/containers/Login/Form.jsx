@@ -25,7 +25,7 @@ class LoginForm extends React.Component {
         <FormItem>
           {getFieldDecorator('email', {
             rules: [{ required: true, type: 'email', message: 'Please input a valid email.' }],
-          })(<Input prefix={<Icon type='mail' style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Username' />)}
+          })(<Input prefix={<Icon type='mail' style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Email' />)}
         </FormItem>
         <FormItem>
           {getFieldDecorator('password', {

@@ -4,7 +4,8 @@ import Home from '../Home'
 import Login from '../Login'
 import NotFound from '../NotFound'
 import Dashboard from '../Dashboard'
-import Profile from '../Profile'
+import UserList from '../UserList'
+import UserForm from '../UserForm'
 import PrivateRoute from '../../components/PrivateRoute'
 import './index.less'
 
@@ -17,7 +18,9 @@ export default class App extends React.Component {
           <Route exact path='/login' component={Login} />
           <PrivateRoute exact path='/admin' component={() => <Redirect to='/admin/dashboard' />} />
           <PrivateRoute exact path='/admin/dashboard' component={Dashboard} />
-          <PrivateRoute exact path='/admin/profile' component={Profile} />
+          <PrivateRoute exact path='/admin/users' component={UserList} />
+          <PrivateRoute exact path='/admin/users/create' component={props => <UserForm {...props} type='create' />} />
+          <PrivateRoute exact path='/admin/users/:userId/edit' component={props => <UserForm {...props} type='edit' />} />
           <Route component={NotFound} />
         </Switch>
       </BrowserRouter>
