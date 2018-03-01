@@ -3,7 +3,7 @@ import { Button, Icon, Modal } from 'antd'
 import { Link } from 'react-router-dom'
 
 export const CreateButton = props => (
-  <Button style={{ marginBottom: '12px' }} type='primary' {...props}><Icon type='plus' />Create</Button>
+  <Button type='primary' {...props}><Icon type='plus' />Create</Button>
 )
 
 export const TableRowEditButton = props => (

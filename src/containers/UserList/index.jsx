@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Row, Col, Input } from 'antd'
+import { Row, Col, Input, Button } from 'antd'
 import AdminLayout from '../../components/AdminLayout'
 import SectionHeader from '../../components/SectionHeader'
 import SectionHeaderTemplate from '../../components/SectionHeaderTemplate'
@@ -25,6 +25,7 @@ class UserList extends React.Component {
     this.handleTableOnChange = this.handleTableOnChange.bind(this)
     this.handleSearchOnChange = this.handleSearchOnChange.bind(this)
     this.handleSearchOnClick = this.handleSearchOnClick.bind(this)
+    this.handleSearchOnCancel = this.handleSearchOnCancel.bind(this)
   }
 
   componentDidMount() {
@@ -77,8 +78,18 @@ class UserList extends React.Component {
     }
   }
 
-  handleSearchOnClick() {
-    this.props.searchTable({ isSearching: true })
+  async handleSearchOnClick() {
+    await this.props.searchTable({ isSearching: true })
+    await this.props.changeTable({})
+    this.fetchItems()
+  }
+
+  async handleSearchOnCancel(e) {
+    e.preventDefault()
+    await this.props.editSearch({ search: null })
+    await this.props.searchTable({ isSearching: false })
+    await this.props.changeTable({})
+    this.fetchItems()
   }
 
   render() {
@@ -92,9 +103,28 @@ class UserList extends React.Component {
             />
           </SectionHeader>
           <SectionContent>
-            <Row type='flex' justify='space-between'>
-              <Col><CreateButton onClick={this.handleCreateButtonOnClick} /></Col>
-              <Col><Search onChange={this.handleSearchOnChange} onSearch={this.handleSearchOnClick} value={this.props.search} /></Col>
+            <Row type='flex' justify='space-between' style={{ marginBottom: '24px' }}>
+              <Col>
+                <CreateButton
+                  onClick={this.handleCreateButtonOnClick}
+                />
+              </Col>
+              <Col>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Search
+                    onChange={this.handleSearchOnChange}
+                    onSearch={this.handleSearchOnClick}
+                    value={this.props.search}
+                    enterButton
+                  />
+                  {
+                    this.props.isSearching &&
+                    <a href='' onClick={this.handleSearchOnCancel} style={{ lineHeight: 1.5, marginLeft: '12px' }}>
+                      Cancel
+                    </a>
+                  }
+                </div>
+              </Col>
             </Row>
             <Table
               loading={this.props.isFetchItemsLoading}
