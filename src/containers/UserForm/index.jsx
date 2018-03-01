@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import { Redirect, withRouter } from 'react-router-dom'
 import { message } from 'antd'
 import AdminLayout from '../../components/AdminLayout'
 import SectionHeader from '../../components/SectionHeader'
@@ -26,13 +26,13 @@ class ItemForm extends React.Component {
   constructor(props, context) {
     super(props, context)
     this.handleFormOnSubmit = this.handleFormOnSubmit.bind(this)
+    this.handleFormOnDelete = this.handleFormOnDelete.bind(this)
     this.props.reset()
   }
 
   componentDidMount() {
-    // this.props.handleFormOnFieldsChange({})
     if (this.props.type === 'edit') {
-      this.props.fetchItem()
+      this.props.fetchItem({ id: this.props.match.params.itemId })
     }
   }
 
@@ -43,6 +43,14 @@ class ItemForm extends React.Component {
       message.success('You have successfully edited the item.')
     } else if (this.props.isDeleteItemLoading && nextProps.isDeleteItemSuccess) {
       message.success('You have successfully deleted the item.')
+    } else if (this.props.isCreateItemLoading && nextProps.createItemError) {
+      message.error(nextProps.createItemError)
+    } else if (this.props.isEditItemLoading && nextProps.editItemError) {
+      message.error(nextProps.editItemError)
+    } else if (this.props.isDeleteItemLoading && nextProps.deleteItemError) {
+      message.error(nextProps.deleteItemError)
+    } else if (this.props.isFetchItemLoading && nextProps.fetchItemError) {
+      message.error(nextProps.fetchItemError)
     }
   }
 
@@ -53,6 +61,10 @@ class ItemForm extends React.Component {
       const item = { ...this.props.item, ...values }
       this.props.editItem(item)
     }
+  }
+
+  handleFormOnDelete() {
+    this.props.deleteItem({ id: this.props.match.params.itemId })
   }
 
   render() {
@@ -79,7 +91,7 @@ class ItemForm extends React.Component {
               (isCreateForm || (!isCreateForm && this.props.item)) &&
               <Form
                 onSubmit={this.handleFormOnSubmit}
-                onDelete={this.props.deleteItem}
+                onDelete={this.handleFormOnDelete}
                 onFieldsChange={this.props.editForm}
                 formFieldValues={this.props.formFieldValues}
                 isCreateItemLoading={this.props.isCreateItemLoading}
@@ -106,6 +118,10 @@ const mapStateToProps = (state) => {
     isDeleteItemLoading,
     isDeleteItemSuccess,
     item,
+    fetchItemError,
+    createItemError,
+    editItemError,
+    deleteItemError,
   } = state[storeKey]
   return {
     isFetchItemLoading,
@@ -117,6 +133,10 @@ const mapStateToProps = (state) => {
     isDeleteItemLoading,
     isDeleteItemSuccess,
     item,
+    fetchItemError,
+    createItemError,
+    editItemError,
+    deleteItemError,
   }
 }
 
@@ -124,9 +144,9 @@ const mapDispatchToProps = dispatch => ({
   createItem: params => dispatch(createItem(params)),
   editItem: params => dispatch(editItem(params)),
   fetchItem: params => dispatch(fetchItem(params)),
-  deleteItem: () => dispatch(deleteItem()),
+  deleteItem: params => dispatch(deleteItem(params)),
   editForm: formFieldsChange => dispatch(editForm(formFieldsChange)),
   reset: () => dispatch(reset()),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ItemForm)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ItemForm))

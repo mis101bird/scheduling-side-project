@@ -49,7 +49,7 @@ class ItemListTable extends React.Component {
         key: 'action',
         render: (text, record) => (
           <span>
-            <TableRowEditButton to={`${this.props.editItemPath}/${record.id}`} />
+            <TableRowEditButton to={`${this.props.editPath}/${record.id}`} />
           </span>
         ),
       },

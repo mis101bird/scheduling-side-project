@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card } from 'antd'
+import { Card, message } from 'antd'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 import { changeFormFields, sendLoginRequest } from '../../actions/login'
@@ -10,6 +10,14 @@ import backgroundImage from '../../assets/background.jpg'
 import './index.less'
 
 class Login extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.isLoginLoading && nextProps.isLoginSuccess) {
+      message.success('You have successfully logged in.')
+    } else if (this.props.isLoginLoading && nextProps.loginError) {
+      message.error(nextProps.loginError)
+    }
+  }
+
   render() {
     const { isLoggedIn } = this.props
     if (isLoggedIn) {
@@ -35,7 +43,7 @@ class Login extends React.Component {
             onSubmit={this.props.handleFormOnSubmit}
             onFieldsChange={this.props.handleFormOnFieldsChange}
             formFieldValues={this.props.formFieldValues}
-            isLoading={this.props.isLoading}
+            isLoading={this.props.isLoginLoading}
           />
         </Card>
         <AppFooter />
@@ -47,13 +55,17 @@ class Login extends React.Component {
 const mapStateToProps = (state) => {
   const {
     formFieldValues,
-    isLoading,
+    isLoginLoading,
+    isLoginSuccess,
+    loginError,
   } = state.login
   const isLoggedIn = !!state.app.accessToken
   return {
     formFieldValues,
-    isLoading,
+    isLoginLoading,
     isLoggedIn,
+    isLoginSuccess,
+    loginError,
   }
 }
 

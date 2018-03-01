@@ -20,7 +20,7 @@ export default class App extends React.Component {
           <PrivateRoute exact path='/admin/dashboard' component={Dashboard} />
           <PrivateRoute exact path='/admin/users' component={UserList} />
           <PrivateRoute exact path='/admin/users/create' component={props => <UserForm {...props} type='create' />} />
-          <PrivateRoute exact path='/admin/users/:userId/edit' component={props => <UserForm {...props} type='edit' />} />
+          <PrivateRoute exact path='/admin/users/edit/:itemId' component={props => <UserForm {...props} type='edit' />} />
           <Route component={NotFound} />
         </Switch>
       </BrowserRouter>

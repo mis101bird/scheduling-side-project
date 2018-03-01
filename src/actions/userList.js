@@ -37,6 +37,11 @@ export const fetchItems = (params = {}) => (dispatch) => {
       items,
       total,
     })
+    // error
+    // dispatch({
+    //   type: ActionTypes.USERLIST_FETCHITEMS_FAIL,
+    //   fetchItemsError: 'This is a error',
+    // })
   }, 2000)
 }
 

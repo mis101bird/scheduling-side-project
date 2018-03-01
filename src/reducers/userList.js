@@ -10,7 +10,7 @@ import {
 export default (state = {}, action) => {
   switch (action.type) {
     case USERLIST_FETCHITEMS_LOAD:
-      return { ...state, isFetchItemsLoading: true }
+      return { ...state, isFetchItemsLoading: true, fetchItemsError: null }
     case USERLIST_FETCHITEMS_SUCCEED:
       return {
         ...state,
@@ -19,7 +19,12 @@ export default (state = {}, action) => {
         pagination: { ...state.pagination, total: action.total },
       }
     case USERLIST_FETCHITEMS_FAIL:
-      return { ...state, isFetchItemsLoading: false }
+      return {
+        ...state,
+        isFetchItemsLoading: false,
+        items: null,
+        fetchItemsError: action.fetchItemsError,
+      }
     case USERLIST_CHANGETABLE_CHANGE: {
       return {
         ...state,

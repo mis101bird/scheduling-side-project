@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Row, Col, Input } from 'antd'
+import { Row, Col, Input, message } from 'antd'
 import AdminLayout from '../../components/AdminLayout'
 import SectionHeader from '../../components/SectionHeader'
 import SectionHeaderTemplate from '../../components/SectionHeaderTemplate'
@@ -35,6 +35,12 @@ class ItemList extends React.Component {
     this.fetchItems()
     const { isSearching } = this.props
     !isSearching && this.props.editSearch({ search: null })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.isFetchItemsLoading && nextProps.fetchItemsError) {
+      message.error(nextProps.fetchItemsError)
+    }
   }
 
   fetchItems() {
@@ -155,6 +161,7 @@ const mapStateToProps = (state) => {
     sorter,
     search,
     isSearching,
+    fetchItemsError,
   } = state[storeKey]
   !pagination.pageSize && (pagination.pageSize = 1)
   !pagination.current && (pagination.current = 1)
@@ -167,6 +174,7 @@ const mapStateToProps = (state) => {
     sorter,
     search,
     isSearching,
+    fetchItemsError,
   }
 }
 

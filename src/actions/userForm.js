@@ -11,7 +11,6 @@ export const reset = () => ({
 
 export const fetchItem = id => (dispatch) => {
   dispatch({ type: ActionTypes.USERFORM_FETCHITEM_LOAD })
-  // fake login
   window.setTimeout(() => {
     const item = {
       id,
@@ -32,6 +31,11 @@ export const fetchItem = id => (dispatch) => {
         email: { name: 'email', value: item.email },
       },
     })
+    // error
+    // dispatch({
+    //   type: ActionTypes.USERFORM_FETCHITEM_FAIL,
+    //   fetchItemError: 'This is a fetch item error.',
+    // })
   }, 2000)
 }
 
@@ -41,6 +45,10 @@ export const createItem = values => (dispatch) => {
     dispatch({ type: ActionTypes.USERLIST_CHANGETABLE_CHANGE })
     dispatch({ type: ActionTypes.USERFORM_CREATEITEM_SUCCEED })
     dispatch({ type: ActionTypes.USERFORM_ENTER_RESET })
+    // dispatch({
+    //   type: ActionTypes.USERFORM_CREATEITEM_FAIL,
+    //   createItemError: 'This is a create item error.',
+    // })
   }, 2000)
 }
 
@@ -48,6 +56,10 @@ export const editItem = params => (dispatch) => {
   dispatch({ type: ActionTypes.USERFORM_EDITITEM_LOAD })
   window.setTimeout(() => {
     dispatch({ type: ActionTypes.USERFORM_EDITITEM_SUCCEED })
+    // dispatch({
+    //   type: ActionTypes.USERFORM_EDITITEM_FAIL,
+    //   editItemError: 'This is a edit item error.',
+    // })
   }, 2000)
 }
 
@@ -56,5 +68,9 @@ export const deleteItem = values => (dispatch) => {
   window.setTimeout(() => {
     dispatch({ type: ActionTypes.USERFORM_DELETEITEM_SUCCEED })
     dispatch({ type: ActionTypes.USERFORM_ENTER_RESET })
+    // dispatch({
+    //   type: ActionTypes.USERFORM_DELETEITEM_FAIL,
+    //   deleteItemError: 'This is a delete item error.',
+    // })
   }, 2000)
 }
