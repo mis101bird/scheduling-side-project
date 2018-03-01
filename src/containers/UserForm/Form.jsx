@@ -3,7 +3,7 @@ import { Form, Input, Button, Modal } from 'antd'
 
 const FormItem = Form.Item
 
-class UserForm extends React.Component {
+class ItemForm extends React.Component {
   constructor(props, context) {
     super(props, context)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
@@ -121,6 +121,6 @@ const CustomizedForm = Form.create({
   // onValuesChange(_, values) {
   //   console.log(values)
   // },
-})(UserForm)
+})(ItemForm)
 
 export default CustomizedForm

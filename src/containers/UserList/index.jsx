@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Row, Col, Input, Button } from 'antd'
+import { Row, Col, Input } from 'antd'
 import AdminLayout from '../../components/AdminLayout'
 import SectionHeader from '../../components/SectionHeader'
 import SectionHeaderTemplate from '../../components/SectionHeaderTemplate'
@@ -17,8 +17,11 @@ import {
 
 const { Search } = Input
 const pageTitle = 'Users'
+const storeKey = 'userList'
+const createPath = '/admin/users/create'
+const editPath = '/admin/users/edit'
 
-class UserList extends React.Component {
+class ItemList extends React.Component {
   constructor(props, context) {
     super(props, context)
     this.handleCreateButtonOnClick = this.handleCreateButtonOnClick.bind(this)
@@ -52,7 +55,7 @@ class UserList extends React.Component {
 
   handleCreateButtonOnClick(e) {
     e.preventDefault()
-    this.props.history.push('/admin/users/create')
+    this.props.history.push(createPath)
   }
 
   async handleTableOnChange(pagination, filters, sorter) {
@@ -133,6 +136,7 @@ class UserList extends React.Component {
               filters={this.props.filters}
               sorter={this.props.sorter}
               onChange={this.handleTableOnChange}
+              editPath={editPath}
             />
           </SectionContent>
         </AdminLayout>
@@ -151,7 +155,7 @@ const mapStateToProps = (state) => {
     sorter,
     search,
     isSearching,
-  } = state.userList
+  } = state[storeKey]
   !pagination.pageSize && (pagination.pageSize = 1)
   !pagination.current && (pagination.current = 1)
   return {
@@ -173,4 +177,4 @@ const mapDispatchToProps = dispatch => ({
   searchTable: search => dispatch(searchTable(search)),
 })
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserList))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ItemList))

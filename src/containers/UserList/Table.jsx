@@ -2,39 +2,7 @@ import React from 'react'
 import { Table, Modal } from 'antd'
 import { TableRowEditButton } from '../../components/AppButton'
 
-const columns = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    sorter: true,
-  }, {
-    title: 'First Name',
-    dataIndex: 'first_name',
-    key: 'first_name',
-    sorter: true,
-  }, {
-    title: 'Last Name',
-    dataIndex: 'last_name',
-    key: 'last_name',
-    sorter: true,
-  }, {
-    title: 'Email',
-    dataIndex: 'email',
-    key: 'email',
-    sorter: true,
-  }, {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-        <TableRowEditButton to={`/admin/users/${record.id}/edit`} />
-      </span>
-    ),
-  },
-]
-
-class UserListTable extends React.Component {
+class ItemListTable extends React.Component {
   constructor(props, context) {
     super(props, context)
     this.handleDeleteButtonOnClick = this.handleDeleteButtonOnClick.bind(this)
@@ -55,6 +23,37 @@ class UserListTable extends React.Component {
   }
 
   render() {
+    const columns = [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+        sorter: true,
+      }, {
+        title: 'First Name',
+        dataIndex: 'first_name',
+        key: 'first_name',
+        sorter: true,
+      }, {
+        title: 'Last Name',
+        dataIndex: 'last_name',
+        key: 'last_name',
+        sorter: true,
+      }, {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+        sorter: true,
+      }, {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <span>
+            <TableRowEditButton to={`${this.props.editItemPath}/${record.id}`} />
+          </span>
+        ),
+      },
+    ]
     return (
       <Table
         rowKey={record => `item-row-${record.id}`}
@@ -65,4 +64,4 @@ class UserListTable extends React.Component {
   }
 }
 
-export default UserListTable
+export default ItemListTable

@@ -17,6 +17,11 @@ import {
   reset,
 } from '../../actions/userForm'
 
+const listPath = '/admin/users'
+const itemsTitle = 'Users'
+const itemTitle = 'user'
+const storeKey = 'userForm'
+
 class ItemForm extends React.Component {
   constructor(props, context) {
     super(props, context)
@@ -55,15 +60,15 @@ class ItemForm extends React.Component {
     const isCreateForm = type === 'create'
     const actionTitle = isCreateForm ? 'Create' : 'Edit'
     if (isCreateItemSuccess || isDeleteItemSuccess) {
-      return <Redirect to='/admin/users' />
+      return <Redirect to={listPath} />
     }
     return (
       <div>
         <AdminLayout>
           <SectionHeader>
             <SectionHeaderTemplate
-              breadcrumbRoutes={[{ path: '/admin', title: 'Home' }, { path: '/admin/users', title: 'Users' }, { title: actionTitle }]}
-              title={`${actionTitle} User`}
+              breadcrumbRoutes={[{ path: '/admin', title: 'Home' }, { path: listPath, title: itemsTitle }, { title: actionTitle }]}
+              title={`${actionTitle} ${itemTitle}`}
             />
           </SectionHeader>
           <SectionContent>
@@ -101,7 +106,7 @@ const mapStateToProps = (state) => {
     isDeleteItemLoading,
     isDeleteItemSuccess,
     item,
-  } = state.userForm
+  } = state[storeKey]
   return {
     isFetchItemLoading,
     formFieldValues,
