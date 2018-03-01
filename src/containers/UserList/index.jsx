@@ -8,6 +8,8 @@ import SectionContent from '../../components/SectionContent'
 import { CreateButton } from '../../components/AppButton'
 import Table from './Table'
 
+const pageTitle = 'Users'
+
 class UserList extends React.Component {
   constructor(props, context) {
     super(props, context)
@@ -30,8 +32,8 @@ class UserList extends React.Component {
         <AdminLayout>
           <SectionHeader>
             <SectionHeaderTemplate
-              breadcrumbDataSource={[{ href: '/admin', title: 'Home' }, { title: 'Users' }]}
-              title='Users'
+              breadcrumbRoutes={[{ path: '/admin', title: 'Home' }, { title: pageTitle }]}
+              title={pageTitle}
             />
           </SectionHeader>
           <SectionContent>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input, Button, Icon } from 'antd'
+import { Form, Input, Button } from 'antd'
 
 const FormItem = Form.Item
 
@@ -43,6 +43,7 @@ class UserForm extends React.Component {
         },
       },
     }
+    const actionTitle = this.props.type === 'create' ? 'Create' : 'Save'
     return (
       <Form onSubmit={this.handleOnSubmit}>
         <FormItem label='First Name' {...formItemLayout}>
@@ -57,6 +58,7 @@ class UserForm extends React.Component {
         </FormItem>
         <FormItem label='Email' {...formItemLayout}>
           {getFieldDecorator('email', {
+            initialValue: 'kk@gmail.com',
             rules: [{ required: true, type: 'email', message: 'Please input a valid value.' }],
           })(<Input placeholder='Email' />)}
         </FormItem>
@@ -66,7 +68,7 @@ class UserForm extends React.Component {
             type='primary'
             htmlType='submit'
           >
-            Create
+            {actionTitle}
           </Button>
         </FormItem>
       </Form>

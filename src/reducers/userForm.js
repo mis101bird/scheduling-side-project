@@ -1,38 +1,41 @@
 import {
-  USERFORM_FETCHUSER_LOAD,
-  USERFORM_FETCHUSER_SUCCEED,
-  USERFORM_FETCHUSER_FAIL,
+  USERFORM_FETCHITEM_LOAD,
+  USERFORM_FETCHITEM_SUCCEED,
+  USERFORM_FETCHITEM_FAIL,
   USERFORM_EDITFORM_CHANGE,
-  USERFORM_CREATEUSER_LOAD,
-  USERFORM_CREATEUSER_SUCCEED,
-  USERFORM_CREATEUSER_FAIL,
-  USERFORM_EDITUSER_LOAD,
-  USERFORM_EDITUSER_SUCCEED,
-  USERFORM_EDITUSER_FAIL,
+  USERFORM_ENTER_RESET,
+  USERFORM_CREATEITEM_LOAD,
+  USERFORM_CREATEITEM_SUCCEED,
+  USERFORM_CREATEITEM_FAIL,
+  USERFORM_EDITITEM_LOAD,
+  USERFORM_EDITITEM_SUCCEED,
+  USERFORM_EDITITEM_FAIL,
 } from '../constants/actionTypes'
 
 export default (state = {}, action) => {
   switch (action.type) {
-    case USERFORM_FETCHUSER_LOAD:
-      return { ...state, isFetchUserLoading: true }
-    case USERFORM_FETCHUSER_SUCCEED:
-      return { ...state, isFetchUserLoading: false }
-    case USERFORM_FETCHUSER_FAIL:
-      return { ...state, isFetchUserLoading: false }
+    case USERFORM_FETCHITEM_LOAD:
+      return { ...state, isFetchItemLoading: true }
+    case USERFORM_FETCHITEM_SUCCEED:
+      return { ...state, isFetchItemLoading: false, item: action.item }
+    case USERFORM_FETCHITEM_FAIL:
+      return { ...state, isFetchItemLoading: false }
+    case USERFORM_ENTER_RESET:
+      return {}
     case USERFORM_EDITFORM_CHANGE:
       return { ...state, formFieldValues: { ...state.formFieldValues, ...action.field } }
-    case USERFORM_CREATEUSER_LOAD:
-      return { ...state, isCreateUserLoading: true }
-    case USERFORM_CREATEUSER_SUCCEED:
-      return { ...state, isCreateUserLoading: false }
-    case USERFORM_CREATEUSER_FAIL:
-      return { ...state, isCreateUserLoading: false }
-    case USERFORM_EDITUSER_LOAD:
-      return { ...state, isEditUserLoading: true }
-    case USERFORM_EDITUSER_SUCCEED:
-      return { ...state, isEditUserLoading: false }
-    case USERFORM_EDITUSER_FAIL:
-      return { ...state, isEditUserLoading: false }
+    case USERFORM_CREATEITEM_LOAD:
+      return { ...state, isCreateItemLoading: true, isCreateItemSuccess: false }
+    case USERFORM_CREATEITEM_SUCCEED:
+      return { ...state, isCreateItemLoading: false, isCreateItemSuccess: true }
+    case USERFORM_CREATEITEM_FAIL:
+      return { ...state, isCreateItemLoading: false }
+    case USERFORM_EDITITEM_LOAD:
+      return { ...state, isEditItemLoading: true, isEditItemSuccess: false }
+    case USERFORM_EDITITEM_SUCCEED:
+      return { ...state, isEditItemLoading: false, isEditItemSuccess: true }
+    case USERFORM_EDITITEM_FAIL:
+      return { ...state, isEditItemLoading: false }
     default:
       return state
   }
