@@ -1,31 +1,28 @@
 import React from 'react'
-import { Table, Divider, Modal } from 'antd'
-import { TableRowEditButton, TableRowDeleteButton } from '../../components/AppButton'
-
-const data = [{
-  id: '1',
-  first_name: 'KK',
-  last_name: 'Chen',
-  email: 'kk@bichenkk.com',
-}]
+import { Table, Modal } from 'antd'
+import { TableRowEditButton } from '../../components/AppButton'
 
 const columns = [
   {
     title: 'ID',
     dataIndex: 'id',
     key: 'id',
+    sorter: true,
   }, {
     title: 'First Name',
     dataIndex: 'first_name',
     key: 'first_name',
+    sorter: true,
   }, {
     title: 'Last Name',
     dataIndex: 'last_name',
     key: 'last_name',
+    sorter: true,
   }, {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
+    sorter: true,
   }, {
     title: 'Action',
     key: 'action',
@@ -60,8 +57,7 @@ class UserListTable extends React.Component {
   render() {
     return (
       <Table
-        rowKey='id'
-        dataSource={data}
+        rowKey={record => `item-row-${record.id}`}
         columns={columns}
         {...this.props}
       />

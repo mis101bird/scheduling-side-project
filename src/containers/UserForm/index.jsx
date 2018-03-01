@@ -41,11 +41,12 @@ class ItemForm extends React.Component {
     }
   }
 
-  handleFormOnSubmit() {
+  handleFormOnSubmit(values) {
     if (this.props.type === 'create') {
-      this.props.createItem()
+      this.props.createItem(values)
     } else {
-      this.props.editItem()
+      const item = { ...this.props.item, ...values }
+      this.props.editItem(item)
     }
   }
 
@@ -72,7 +73,7 @@ class ItemForm extends React.Component {
             {
               (isCreateForm || (!isCreateForm && this.props.item)) &&
               <Form
-                onSubmit={isCreateForm ? this.props.createItem : this.props.editItem}
+                onSubmit={this.handleFormOnSubmit}
                 onDelete={this.props.deleteItem}
                 onFieldsChange={this.props.editForm}
                 formFieldValues={this.props.formFieldValues}
@@ -115,9 +116,9 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  createItem: formValues => dispatch(createItem(formValues)),
-  editItem: formValues => dispatch(editItem(formValues)),
-  fetchItem: param => dispatch(fetchItem(param)),
+  createItem: params => dispatch(createItem(params)),
+  editItem: params => dispatch(editItem(params)),
+  fetchItem: params => dispatch(fetchItem(params)),
   deleteItem: () => dispatch(deleteItem()),
   editForm: formFieldsChange => dispatch(editForm(formFieldsChange)),
   reset: () => dispatch(reset()),

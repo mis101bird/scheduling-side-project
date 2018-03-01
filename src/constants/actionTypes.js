@@ -10,7 +10,12 @@ export const LOGIN_LOGIN_FAIL = 'login/login/fail'
 
 export const ADMIN_OPENSUBMENU_CHANGE = 'admin/openSubMenu/change'
 
-export const USERLIST_FETCHITEMS_LOAD = 'userForm/enter/reset'
+export const USERLIST_FETCHITEMS_LOAD = 'userLists/fetchItems/load'
+export const USERLIST_FETCHITEMS_SUCCEED = 'userLists/fetchItems/succeed'
+export const USERLIST_FETCHITEMS_FAIL = 'userLists/fetchItems/fail'
+export const USERLIST_CHANGETABLE_CHANGE = 'userLists/changeTable/change'
+export const USERLIST_SEARCHTABLE_EDIT = 'userLists/searchTable/edit'
+export const USERLIST_SEARCHTABLE_SEARCH = 'userLists/searchTable/search'
 
 export const USERFORM_ENTER_RESET = 'userForm/enter/reset'
 export const USERFORM_EDITFORM_CHANGE = 'userForm/editForm/change'

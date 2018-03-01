@@ -38,12 +38,13 @@ export const fetchItem = id => (dispatch) => {
 export const createItem = values => (dispatch) => {
   dispatch({ type: ActionTypes.USERFORM_CREATEITEM_LOAD })
   window.setTimeout(() => {
+    dispatch({ type: ActionTypes.USERLIST_CHANGETABLE_CHANGE })
     dispatch({ type: ActionTypes.USERFORM_CREATEITEM_SUCCEED })
     dispatch({ type: ActionTypes.USERFORM_ENTER_RESET })
   }, 2000)
 }
 
-export const editItem = values => (dispatch) => {
+export const editItem = params => (dispatch) => {
   dispatch({ type: ActionTypes.USERFORM_EDITITEM_LOAD })
   window.setTimeout(() => {
     dispatch({ type: ActionTypes.USERFORM_EDITITEM_SUCCEED })
