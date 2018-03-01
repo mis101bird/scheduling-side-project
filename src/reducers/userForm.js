@@ -10,6 +10,9 @@ import {
   USERFORM_EDITITEM_LOAD,
   USERFORM_EDITITEM_SUCCEED,
   USERFORM_EDITITEM_FAIL,
+  USERFORM_DELETEITEM_LOAD,
+  USERFORM_DELETEITEM_SUCCEED,
+  USERFORM_DELETEITEM_FAIL,
 } from '../constants/actionTypes'
 
 export default (state = {}, action) => {
@@ -36,6 +39,12 @@ export default (state = {}, action) => {
       return { ...state, isEditItemLoading: false, isEditItemSuccess: true }
     case USERFORM_EDITITEM_FAIL:
       return { ...state, isEditItemLoading: false }
+    case USERFORM_DELETEITEM_LOAD:
+      return { ...state, isDeleteItemLoading: true, isDeleteItemSuccess: false }
+    case USERFORM_DELETEITEM_SUCCEED:
+      return { ...state, isDeleteItemLoading: false, isDeleteItemSuccess: true }
+    case USERFORM_DELETEITEM_FAIL:
+      return { ...state, isDeleteItemLoading: false }
     default:
       return state
   }

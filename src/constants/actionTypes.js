@@ -10,6 +10,8 @@ export const LOGIN_LOGIN_FAIL = 'login/login/fail'
 
 export const ADMIN_OPENSUBMENU_CHANGE = 'admin/openSubMenu/change'
 
+export const USERLIST_FETCHITEMS_LOAD = 'userForm/enter/reset'
+
 export const USERFORM_ENTER_RESET = 'userForm/enter/reset'
 export const USERFORM_EDITFORM_CHANGE = 'userForm/editForm/change'
 export const USERFORM_FETCHITEM_LOAD = 'userForm/fetchItem/load'
@@ -21,4 +23,6 @@ export const USERFORM_CREATEITEM_FAIL = 'userForm/createItem/fail'
 export const USERFORM_EDITITEM_LOAD = 'userForm/editItem/load'
 export const USERFORM_EDITITEM_SUCCEED = 'userForm/editItem/succeed'
 export const USERFORM_EDITITEM_FAIL = 'userForm/editItem/fail'
-
+export const USERFORM_DELETEITEM_LOAD = 'userForm/deleteItem/load'
+export const USERFORM_DELETEITEM_SUCCEED = 'userForm/deleteItem/succeed'
+export const USERFORM_DELETEITEM_FAIL = 'userForm/deleteItem/fail'

@@ -32,22 +32,28 @@ export const fetchItem = id => (dispatch) => {
         email: { name: 'email', value: item.email },
       },
     })
-  }, 1000)
+  }, 2000)
 }
 
 export const createItem = values => (dispatch) => {
   dispatch({ type: ActionTypes.USERFORM_CREATEITEM_LOAD })
-  // fake login
   window.setTimeout(() => {
     dispatch({ type: ActionTypes.USERFORM_CREATEITEM_SUCCEED })
     dispatch({ type: ActionTypes.USERFORM_ENTER_RESET })
-  }, 1000)
+  }, 2000)
 }
 
 export const editItem = values => (dispatch) => {
   dispatch({ type: ActionTypes.USERFORM_EDITITEM_LOAD })
-  // fake login
   window.setTimeout(() => {
     dispatch({ type: ActionTypes.USERFORM_EDITITEM_SUCCEED })
-  }, 1000)
+  }, 2000)
+}
+
+export const deleteItem = values => (dispatch) => {
+  dispatch({ type: ActionTypes.USERFORM_DELETEITEM_LOAD })
+  window.setTimeout(() => {
+    dispatch({ type: ActionTypes.USERFORM_DELETEITEM_SUCCEED })
+    dispatch({ type: ActionTypes.USERFORM_ENTER_RESET })
+  }, 2000)
 }

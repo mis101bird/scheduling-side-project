@@ -8,9 +8,14 @@ import SectionHeaderTemplate from '../../components/SectionHeaderTemplate'
 import SectionContent from '../../components/SectionContent'
 import Spin from '../../components/Spin'
 import Form from './Form'
-import { editForm, fetchItem, createItem, editItem, reset } from '../../actions/userForm'
-
-const pageTitle = 'User'
+import {
+  editForm,
+  fetchItem,
+  createItem,
+  editItem,
+  deleteItem,
+  reset,
+} from '../../actions/userForm'
 
 class ItemForm extends React.Component {
   constructor(props, context) {
@@ -29,9 +34,10 @@ class ItemForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isCreateItemLoading && nextProps.isCreateItemSuccess) {
       message.success('You have successfully created the item.')
-    }
-    if (this.props.isEditItemLoading && nextProps.isEditItemSuccess) {
+    } else if (this.props.isEditItemLoading && nextProps.isEditItemSuccess) {
       message.success('You have successfully edited the item.')
+    } else if (this.props.isDeleteItemLoading && nextProps.isDeleteItemSuccess) {
+      message.success('You have successfully deleted the item.')
     }
   }
 
@@ -44,10 +50,10 @@ class ItemForm extends React.Component {
   }
 
   render() {
-    const { type, isCreateItemSuccess } = this.props
+    const { type, isCreateItemSuccess, isDeleteItemSuccess } = this.props
     const isCreateForm = type === 'create'
     const actionTitle = isCreateForm ? 'Create' : 'Edit'
-    if (isCreateItemSuccess) {
+    if (isCreateItemSuccess || isDeleteItemSuccess) {
       return <Redirect to='/admin/users' />
     }
     return (
@@ -67,9 +73,12 @@ class ItemForm extends React.Component {
               (isCreateForm || (!isCreateForm && this.props.item)) &&
               <Form
                 onSubmit={isCreateForm ? this.props.createItem : this.props.editItem}
+                onDelete={this.props.deleteItem}
                 onFieldsChange={this.props.editForm}
                 formFieldValues={this.props.formFieldValues}
-                isLoading={this.props.isCreateItemLoading || this.props.isEditItemLoading}
+                isCreateItemLoading={this.props.isCreateItemLoading}
+                isEditItemLoading={this.props.isEditItemLoading}
+                isDeleteItemLoading={this.props.isDeleteItemLoading}
                 type={this.props.type}
               />
             }
@@ -88,6 +97,8 @@ const mapStateToProps = (state) => {
     isCreateItemLoading,
     isCreateItemSuccess,
     isEditItemSuccess,
+    isDeleteItemLoading,
+    isDeleteItemSuccess,
     item,
   } = state.userForm
   return {
@@ -97,6 +108,8 @@ const mapStateToProps = (state) => {
     isCreateItemLoading,
     isCreateItemSuccess,
     isEditItemSuccess,
+    isDeleteItemLoading,
+    isDeleteItemSuccess,
     item,
   }
 }
@@ -105,6 +118,7 @@ const mapDispatchToProps = dispatch => ({
   createItem: formValues => dispatch(createItem(formValues)),
   editItem: formValues => dispatch(editItem(formValues)),
   fetchItem: param => dispatch(fetchItem(param)),
+  deleteItem: () => dispatch(deleteItem()),
   editForm: formFieldsChange => dispatch(editForm(formFieldsChange)),
   reset: () => dispatch(reset()),
 })

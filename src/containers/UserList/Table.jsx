@@ -9,6 +9,34 @@ const data = [{
   email: 'kk@bichenkk.com',
 }]
 
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+  }, {
+    title: 'First Name',
+    dataIndex: 'first_name',
+    key: 'first_name',
+  }, {
+    title: 'Last Name',
+    dataIndex: 'last_name',
+    key: 'last_name',
+  }, {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+  }, {
+    title: 'Action',
+    key: 'action',
+    render: (text, record) => (
+      <span>
+        <TableRowEditButton to={`/admin/users/${record.id}/edit`} />
+      </span>
+    ),
+  },
+]
+
 class UserListTable extends React.Component {
   constructor(props, context) {
     super(props, context)
@@ -29,44 +57,12 @@ class UserListTable extends React.Component {
     })
   }
 
-  get columns() {
-    return [
-      {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-      }, {
-        title: 'First Name',
-        dataIndex: 'first_name',
-        key: 'first_name',
-      }, {
-        title: 'Last Name',
-        dataIndex: 'last_name',
-        key: 'last_name',
-      }, {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-      }, {
-        title: 'Action',
-        key: 'action',
-        render: (text, record) => (
-          <span>
-            <TableRowEditButton to={`/admin/users/${record.id}/edit`} />
-            <Divider type='vertical' />
-            <TableRowDeleteButton deleteAction={() => this.props.onDelete(record)} />
-          </span>
-        ),
-      },
-    ]
-  }
-
   render() {
     return (
       <Table
         rowKey='id'
         dataSource={data}
-        columns={this.columns}
+        columns={columns}
         {...this.props}
       />
     )

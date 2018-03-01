@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Modal } from 'antd'
 
 const FormItem = Form.Item
 
@@ -7,6 +7,7 @@ class UserForm extends React.Component {
   constructor(props, context) {
     super(props, context)
     this.handleOnSubmit = this.handleOnSubmit.bind(this)
+    this.handleOnDelete = this.handleOnDelete.bind(this)
   }
 
   handleOnSubmit(e) {
@@ -18,6 +19,23 @@ class UserForm extends React.Component {
       this.props.onSubmit(values)
     })
   }
+
+  handleOnDelete(e) {
+    e.preventDefault()
+    const handleOnOk = () => { this.props.onDelete() }
+    Modal.confirm({
+      title: 'Delete Item',
+      content: 'Are you sure to delete this item?',
+      okType: 'danger',
+      onOk() {
+        handleOnOk()
+      },
+      onCancel() {
+        // console.log('Cancel')
+      },
+    })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
@@ -43,7 +61,7 @@ class UserForm extends React.Component {
         },
       },
     }
-    const actionTitle = this.props.type === 'create' ? 'Create' : 'Save'
+    const isCreateForm = this.props.type === 'create'
     return (
       <Form onSubmit={this.handleOnSubmit}>
         <FormItem label='First Name' {...formItemLayout}>
@@ -64,12 +82,24 @@ class UserForm extends React.Component {
         </FormItem>
         <FormItem {...tailFormItemLayout}>
           <Button
-            loading={this.props.isLoading}
+            loading={this.props.isCreateItemLoading || this.props.isEditItemLoading}
             type='primary'
             htmlType='submit'
+            style={{ marginRight: '12px' }}
           >
-            {actionTitle}
+            {isCreateForm ? 'Create' : 'Save'}
           </Button>
+          {
+            !isCreateForm &&
+            <Button
+              loading={this.props.isDeleteItemLoading}
+              type='danger'
+              htmlType='button'
+              onClick={this.handleOnDelete}
+            >
+              Delete
+            </Button>
+          }
         </FormItem>
       </Form>
     )
