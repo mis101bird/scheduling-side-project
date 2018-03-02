@@ -28,6 +28,7 @@ module.exports = merge(common, {
       'react-redux',
       'react-router-dom',
       'redux',
+      'redux-thunk',
     ],
   },
   output: {
