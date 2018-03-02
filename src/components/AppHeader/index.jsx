@@ -22,13 +22,15 @@ class CustomisedHeader extends React.Component {
         this.props.history.push('/admin')
         break
       case 'logout': {
-        const handleAppLogOut = () => { this.props.handleAppLogOut() }
+        const handleAppLogOut = () => {
+          this.props.handleAppLogOut()
+          this.props.history.push('/login')
+        }
         Modal.confirm({
           title: 'Logout',
           content: 'Are you sure you want to log out?',
           onOk() {
             handleAppLogOut()
-            this.props.history.push('/login')
           },
           onCancel() {
             // console.log('Cancel')
