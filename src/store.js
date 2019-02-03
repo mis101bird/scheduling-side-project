@@ -9,6 +9,12 @@ const configureStore = () => {
     app: {
       accessToken: localStorage.getItem('accessToken'),
     },
+    home: {
+      fields: {
+        holidays: [],
+        scheduleTimes: []
+      }
+    }
   }
 
   const middlewares = [thunkMiddleware]

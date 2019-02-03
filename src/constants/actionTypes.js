@@ -31,3 +31,5 @@ export const USERFORM_EDITITEM_FAIL = 'userForm/editItem/fail'
 export const USERFORM_DELETEITEM_LOAD = 'userForm/deleteItem/load'
 export const USERFORM_DELETEITEM_SUCCEED = 'userForm/deleteItem/succeed'
 export const USERFORM_DELETEITEM_FAIL = 'userForm/deleteItem/fail'
+
+export const CHANGE_SCHEDULE_FIELDS = 'home/schedule/fields'

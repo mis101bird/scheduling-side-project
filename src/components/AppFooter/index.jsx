@@ -8,7 +8,7 @@ class CustomisedFooter extends React.Component {
   render() {
     return (
       <Footer className='app-footer'>
-        by @bichenkk
+        by @mis101bird
       </Footer>
     )
   }

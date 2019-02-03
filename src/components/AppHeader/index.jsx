@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, Menu, Modal } from 'antd'
+import { Layout, Menu, Modal, Icon } from 'antd'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { logout } from '../../actions/app'
@@ -47,7 +47,8 @@ class CustomisedHeader extends React.Component {
     return (
       <Header className='app-header'>
         <div className='logo'>
-          React Starter
+        <Icon type='schedule' style={{ fontSize: '18px', margin: '0 9px' }} />
+          排班系統
         </div>
         <Menu
           theme='dark'
@@ -56,9 +57,9 @@ class CustomisedHeader extends React.Component {
           style={{ lineHeight: '64px' }}
           onClick={this.handleMenuItemOnClick}
         >
-          { !isLoggedIn && <Menu.Item key='login'>Login</Menu.Item> }
-          { isLoggedIn && <Menu.Item key='admin'>Admin</Menu.Item> }
-          { isLoggedIn && <Menu.Item key='logout'>Logout</Menu.Item> }
+          { !isLoggedIn && <Menu.Item key='login'>登入</Menu.Item> }
+          { isLoggedIn && <Menu.Item key='admin'>管理者</Menu.Item> }
+          { isLoggedIn && <Menu.Item key='logout'>登出</Menu.Item> }
         </Menu>
       </Header>
     )

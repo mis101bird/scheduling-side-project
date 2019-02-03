@@ -9,8 +9,12 @@ export const changeFormFields = formFieldsChange => ({
 export const sendLoginRequest = values => (dispatch) => {
   dispatch({ type: ActionTypes.LOGIN_LOGIN_LOAD })
   window.setTimeout(() => {
-    dispatch({ type: ActionTypes.LOGIN_LOGIN_SUCCEED })
-    dispatch(login({ accessToken: values.email }))
-    // dispatch({ type: ActionTypes.LOGIN_LOGIN_FAIL, loginError: 'This is a login error.' })
+    console.log(values)
+    if(values.email === 'mis101bird@gmail.com' && values.password === 'abcd'){
+      dispatch({ type: ActionTypes.LOGIN_LOGIN_SUCCEED })
+      dispatch(login({ accessToken: values.email }))
+    }else{
+      dispatch({ type: ActionTypes.LOGIN_LOGIN_FAIL, loginError: 'This is a login error.' })
+    }
   }, 1000)
 }
