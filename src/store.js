@@ -7,7 +7,7 @@ const win = window
 const configureStore = () => {
   const initialState = {
     app: {
-      accessToken: localStorage.getItem('accessToken'),
+      accessToken: window.localStorage.getItem('accessToken'),
     },
     home: {
       fields: {

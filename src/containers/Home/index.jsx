@@ -68,7 +68,7 @@ const HolidayList = ({
           <List.Item
             key={index}
             actions={[
-              <a href="#" onClick={deleteHoliday(index)}>
+              <a onClick={deleteHoliday(index)}>
                 刪除
               </a>
             ]}
