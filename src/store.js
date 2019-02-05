@@ -12,7 +12,9 @@ const configureStore = () => {
     home: {
       fields: {
         holidays: [],
-        scheduleTimes: []
+        scheduleTimes: [],
+        humanResDefs: [],
+        fullTimeRes: []
       }
     }
   }
