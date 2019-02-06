@@ -22,9 +22,11 @@ import AppFooter from "../../components/AppFooter";
 import "./index.less";
 import moment from "moment";
 import {
+  formatFloat,
   calcScheduleAllHour,
   calcScheduleDayHour,
-  calcWorkingHour
+  calcWorkingHour,
+  calcHourDiff
 } from "../../utils/briefCalcUtils";
 import {
   changeScheduleFields,
@@ -154,7 +156,7 @@ const FullTimeResItem = ({
         value={schedulePrefers}
         style={{ flex: 1, margin: "0 12px 0 5px" }}
       >
-        {scheduleItems.map(schedule => (
+        {scheduleItems.filter(schedule => !!schedule.name).map(schedule => (
           <Option key={schedule.name}>{schedule.name}</Option>
         ))}
       </Select>
@@ -237,6 +239,95 @@ const HumanResourceDefineItem = ({
       theme="filled"
       style={{ fontSize: "20px" }}
       onClick={deleteHumanResDef}
+    />
+  </Row>
+);
+
+const ScheduleClassDefineItem = ({
+  name,
+  startTime,
+  endTime,
+  priority,
+  humanResDef,
+  humanResDefs,
+  changeScheduleClassDef,
+  deleteScheduleClassDef
+}) => (
+  <Row
+    type="flex"
+    align="middle"
+    justify="space-between"
+    style={{ flexWrap: "nowrap", marginBottom: "5px" }}
+  >
+    <Input
+      addonBefore="名稱"
+      placeholder="e.g. A班"
+      style={{ flex: 1, marginRight: "5px" }}
+      value={name}
+      onChange={e => changeScheduleClassDef({ name: e.target.value })}
+    />
+    <Input.Group compact className='rangeTimeFlex'>
+      <Input
+        style={{
+          width: 79,
+          textAlign: "center",
+          pointerEvents: "none",
+          color: "black"
+        }}
+        value="時間"
+        disabled
+      />
+      <Input
+        style={{ width: 100, textAlign: "center" }}
+        placeholder="8:00"
+        value={startTime}
+        onChange={e => changeScheduleClassDef({ startTime: e.target.value })}
+      />
+      <Input
+        style={{
+          width: 40,
+          borderLeft: 0,
+          textAlign: "center",
+          pointerEvents: "none",
+          backgroundColor: "#fff"
+        }}
+        placeholder="~"
+        disabled
+      />
+      <Input
+        style={{ width: 100, borderLeft: 0, textAlign: "center", marginRight: '5px' }}
+        placeholder="18:00"
+        value={endTime}
+        onChange={e => changeScheduleClassDef({ endTime: e.target.value })}
+      />
+      {calcHourDiff({ startTime, endTime }) && <div>{`(${formatFloat(calcHourDiff({ startTime, endTime }), 2)}小時)`}</div>}
+    </Input.Group>
+    <div className="fullTimeFlex">
+      人力定義
+      <Select
+        mode="multiple"
+        placeholder="至少一個"
+        onChange={value => changeScheduleClassDef({ humanResDef: value })}
+        value={humanResDef}
+        style={{ flex: 1, margin: "0 12px 0 5px" }}
+      >
+        {humanResDefs.filter(def => !!def.name).map(res => (
+          <Option key={res.name}>{res.name}</Option>
+        ))}
+      </Select>
+    </div>
+    <Input
+      style={{ flex: 1, marginRight: "12px" }}
+      addonBefore="優先序"
+      placeholder="e.g. 1"
+      value={priority}
+      onChange={e => changeScheduleClassDef({ priority: e.target.value })}
+    />
+    <Icon
+      type="delete"
+      theme="filled"
+      style={{ fontSize: "20px" }}
+      onClick={deleteScheduleClassDef}
     />
   </Row>
 );
@@ -407,7 +498,8 @@ class Home extends React.Component {
       holidays,
       humanResDefs,
       fullTimeRes,
-      scheduleTimes
+      scheduleTimes,
+      scheduleClassDefs
     } = this.props.fields;
     return (
       <Layout className="home-page">
@@ -491,6 +583,33 @@ class Home extends React.Component {
                       deleteFullTimeRes: this.props.deleteFullTimeRes(idx)
                     };
                     return <FullTimeResItem key={idx} {...resProps} />;
+                  })}
+              </Form.Item>
+            </Card>
+            <Card type="inner" title="排班類型">
+              <Form.Item
+                label={
+                  <div className="label">
+                    類型
+                    <Icon
+                      type="plus-circle"
+                      style={{ fontSize: "20px", marginLeft: "10px" }}
+                      onClick={this.props.addScheduleClassDef}
+                    />
+                  </div>
+                }
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                {scheduleClassDefs.length > 0 &&
+                  scheduleClassDefs.map((classItem, idx) => {
+                    const classProps = {
+                      ...classItem,
+                      humanResDefs,
+                      changeScheduleClassDef: this.props.changeScheduleClassDef(idx),
+                      deleteScheduleClassDef: this.props.deleteScheduleClassDef(idx)
+                    };
+                    return <ScheduleClassDefineItem key={idx} {...classProps} />;
                   })}
               </Form.Item>
             </Card>
@@ -637,6 +756,41 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
           fullTimeRes: [
             ...fields.fullTimeRes.slice(0, index),
             ...fields.fullTimeRes.slice(index + 1)
+          ]
+        })
+      );
+    },
+    changeScheduleClassDef: index => payload => {
+      const newObj = {
+        ...fields.scheduleClassDefs[index],
+        ...payload
+      };
+      return dispatch(
+        changeScheduleFields({
+          scheduleClassDefs: [
+            ...fields.scheduleClassDefs.slice(0, index),
+            newObj,
+            ...fields.scheduleClassDefs.slice(index + 1)
+          ]
+        })
+      );
+    },
+    addScheduleClassDef: () => {
+      return dispatch(
+        changeScheduleFields({
+          scheduleClassDefs: [
+            ...fields.scheduleClassDefs,
+            { name: "", startTime: "", endTime: "", priority: '', humanResDef: [] }
+          ]
+        })
+      );
+    },
+    deleteScheduleClassDef: index => () => {
+      return dispatch(
+        changeScheduleFields({
+          scheduleClassDefs: [
+            ...fields.scheduleClassDefs.slice(0, index),
+            ...fields.scheduleClassDefs.slice(index + 1)
           ]
         })
       );

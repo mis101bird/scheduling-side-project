@@ -14,7 +14,8 @@ const configureStore = () => {
         holidays: [],
         scheduleTimes: [],
         humanResDefs: [],
-        fullTimeRes: []
+        fullTimeRes: [],
+        scheduleClassDefs: []
       }
     }
   }
