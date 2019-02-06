@@ -4,6 +4,9 @@ import reducer from './reducers'
 
 const win = window
 
+/**
+ * fullTimeRes: { name, ..., includes: [], excludes: [], preferIncludes: [], preferExcludes: [] }
+ */
 const configureStore = () => {
   const initialState = {
     app: {
