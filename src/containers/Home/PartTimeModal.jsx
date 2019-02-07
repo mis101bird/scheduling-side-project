@@ -44,7 +44,7 @@ const SelectClassOrDef = ({
   </div>
 );
 
-class PersonalModal extends React.Component {
+class PartTimeModal extends React.Component {
   constructor(props) {
     super(props);
     const { fields: { scheduleTimes = [] } = {} } = props;
@@ -70,7 +70,7 @@ class PersonalModal extends React.Component {
         width='50%'
         visible={visible}
         centered
-        title="個人調整"
+        title="兼職時間"
         closable={false}
         onCancel={handleCancel}
         onOk={handleOk}
@@ -94,13 +94,10 @@ class PersonalModal extends React.Component {
               const dateString = date.format('YYYY/MM/DD')
               const { 
                 [dateString]: { 
-                  includes = [], 
-                  excludes = [], 
-                  preferIncludes = [], 
-                  preferExcludes = [] 
+                  availables = []
               } = {} } = this.props.item
               
-              if(includes.length !== 0 || excludes.length !== 0 || preferIncludes.length !== 0 || preferExcludes.length !== 0){
+              if(availables.length !== 0){
                 return (<Badge status='error' style={{ bottom: '39px', left: '20px' }} />)
               }
             }}
@@ -118,26 +115,25 @@ class PersonalModal extends React.Component {
         </div>
         <Card
           type="inner"
-          title="確定情況 (ex. 我XX日不上晚班)"
+          title="排班挑選"
           style={{ marginBottom: 24 }}
         >
           <Row>
-            <Col span={12}>
               <div style={{ width: '100%' }}>
                 <Icon
                   type="check"
                   style={{ fontSize: "20px", color: "#52c41a" }}
                 />
-                要上的班
+                能兼職的班別
                 <Icon
                   type="plus-circle"
                   style={{ fontSize: "20px", marginLeft: "10px" }}
-                  onClick={() => addCheckItem(this.state.currentDate, 'includes')}
+                  onClick={() => addCheckItem(this.state.currentDate, 'availables')}
                 />
               </div>
               {this.props.item &&
-                _get(this.props.item, `${currentDateString}.includes`, []) &&
-                _get(this.props.item, `${currentDateString}.includes`, []).map(
+                _get(this.props.item, `${currentDateString}.availables`, []) &&
+                _get(this.props.item, `${currentDateString}.availables`, []).map(
                   (opt, idx) => {
                     const defProps = {
                       idx,
@@ -145,105 +141,12 @@ class PersonalModal extends React.Component {
                       humanResDefs,
                       scheduleClassDefs,
                       precised: true,
-                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'includes'),
-                      changeItem: changeCheckItem(this.state.currentDate, idx, 'includes')
+                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'availables'),
+                      changeItem: changeCheckItem(this.state.currentDate, idx, 'availables')
                     };
                     return <SelectClassOrDef key={idx} {...defProps} />;
                   }
                 )}
-            </Col>
-            <Col span={12}>
-            <div style={{ width: '100%' }}>
-              <Icon
-                type="cross"
-                style={{ fontSize: "20px", color: "#eb2f96" }}
-              />
-              不要上的班
-              <Icon
-                type="plus-circle"
-                style={{ fontSize: "20px", marginLeft: "10px" }}
-                onClick={() => addCheckItem(this.state.currentDate, 'excludes')}
-              />
-              </div>
-              {this.props.item &&
-                _get(this.props.item, `${currentDateString}.excludes`, []) &&
-                _get(this.props.item, `${currentDateString}.excludes`, []).map(
-                  (opt, idx) => {
-                    const defProps = {
-                      idx,
-                      ...opt,
-                      humanResDefs,
-                      scheduleClassDefs,
-                      precised: true,
-                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'excludes'),
-                      changeItem: changeCheckItem(this.state.currentDate, idx, 'excludes')
-                    };
-                    return <SelectClassOrDef key={idx} {...defProps} />;
-                  }
-                )}
-            </Col>
-          </Row>
-        </Card>
-        <Card type="inner" title='偏好 (ex. 我"希望"XX日不上晚班)'>
-        <Row>
-            <Col span={12}>
-              <div style={{ width: '100%' }}>
-                <Icon
-                  type="check"
-                  style={{ fontSize: "20px", color: "#52c41a" }}
-                />
-                希望上的班
-                <Icon
-                  type="plus-circle"
-                  style={{ fontSize: "20px", marginLeft: "10px" }}
-                  onClick={() => addCheckItem(this.state.currentDate, 'preferIncludes')}
-                />
-              </div>
-              {this.props.item &&
-                _get(this.props.item, `${currentDateString}.preferIncludes`, []) &&
-                _get(this.props.item, `${currentDateString}.preferIncludes`, []).map(
-                  (opt, idx) => {
-                    const defProps = {
-                      idx,
-                      ...opt,
-                      humanResDefs,
-                      scheduleClassDefs,
-                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'preferIncludes'),
-                      changeItem: changeCheckItem(this.state.currentDate, idx, 'preferIncludes')
-                    };
-                    return <SelectClassOrDef key={idx} {...defProps} />;
-                  }
-                )}
-            </Col>
-            <Col span={12}>
-            <div style={{ width: '100%' }}>
-              <Icon
-                type="cross"
-                style={{ fontSize: "20px", color: "#eb2f96" }}
-              />
-              不希望上的班
-              <Icon
-                type="plus-circle"
-                style={{ fontSize: "20px", marginLeft: "10px" }}
-                onClick={() => addCheckItem(this.state.currentDate, 'preferExcludes')}
-              />
-              </div>
-              {this.props.item &&
-                _get(this.props.item, `${currentDateString}.preferExcludes`, []) &&
-                _get(this.props.item, `${currentDateString}.preferExcludes`, []).map(
-                  (opt, idx) => {
-                    const defProps = {
-                      idx,
-                      ...opt,
-                      humanResDefs,
-                      scheduleClassDefs,
-                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'preferExcludes'),
-                      changeItem: changeCheckItem(this.state.currentDate, idx, 'preferExcludes')
-                    };
-                    return <SelectClassOrDef key={idx} {...defProps} />;
-                  }
-                )}
-            </Col>
           </Row>
         </Card>
       </Modal>
@@ -255,7 +158,7 @@ const mapStateToProps = (state, props) => {
   const { fields = {} } = state.home;
   return {
     fields,
-    item: _get(fields, `fullTimeRes[${props.itemIdx}]`, {})
+    item: _get(fields, `partTimeRes[${props.itemIdx}]`, {})
   };
 };
 
@@ -326,4 +229,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(PersonalModal);
+)(PartTimeModal);

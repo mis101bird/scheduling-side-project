@@ -20,6 +20,7 @@ import iconAntd from "../../assets/antd.png";
 import AppHeader from "../../components/AppHeader";
 import AppFooter from "../../components/AppFooter";
 import PersonalModal from "./PersonalPreferModal";
+import PartTimeModal from './PartTimeModal';
 import "./index.less";
 import moment from "moment";
 import {
@@ -108,7 +109,6 @@ const HolidayList = ({
 
 const FullTimeResItem = ({
   name,
-  schedulePrefers,
   timeOff = [],
   scheduleTimes = [],
   changeFullTimeRes,
@@ -162,6 +162,39 @@ const FullTimeResItem = ({
       theme="filled"
       style={{ fontSize: "20px" }}
       onClick={deleteFullTimeRes}
+    />
+  </Row>
+);
+
+const PartTimeResItem = ({
+  name,
+  changePartTimeRes,
+  deletePartTimeRes,
+  showPartTimeModal
+}) => (
+  <Row
+    type="flex"
+    align="middle"
+    justify="space-between"
+    style={{ flexWrap: "nowrap", marginBottom: "5px" }}
+  >
+    <Input
+      addonBefore="姓名"
+      placeholder="e.g. 林小明"
+      style={{ flex: 1, marginRight: "10px" }}
+      value={name}
+      onChange={e => changePartTimeRes({ name: e.target.value })}
+    />
+    <div className="fullTimeButton">
+      <Button type="primary" onClick={showPartTimeModal}>
+        兼職時間設定
+      </Button>
+    </div>
+    <Icon
+      type="delete"
+      theme="filled"
+      style={{ fontSize: "20px" }}
+      onClick={deletePartTimeRes}
     />
   </Row>
 );
@@ -414,13 +447,16 @@ class Home extends React.Component {
     this.state = {
       briefCalc: undefined,
       openFulltimeModal: false,
-      currentFullTimeIdx: undefined
+      currentFullTimeIdx: undefined,
+      openPartTimeModal: false,
+      currentPartTimeIdx: undefined
     };
 
     this.deleteSundayHoliday = this.deleteSundayHoliday.bind(this);
     this.deleteSaturdayHoliday = this.deleteSaturdayHoliday.bind(this);
     this.calcBriefResource = this.calcBriefResource.bind(this);
     this.showFullTimeModal = this.showFullTimeModal.bind(this);
+    this.showPartTimeModal = this.showPartTimeModal.bind(this);
   }
 
   deleteSundayHoliday() {
@@ -526,13 +562,23 @@ class Home extends React.Component {
     };
   }
 
+  showPartTimeModal(idx) {
+    return () => {
+      this.setState({
+        openPartTimeModal: true,
+        currentPartTimeIdx: idx
+      });
+    };
+  }
+
   render() {
     const {
       holidays,
       humanResDefs,
       fullTimeRes,
       scheduleTimes,
-      scheduleClassDefs
+      scheduleClassDefs,
+      partTimeRes
     } = this.props.fields;
     return (
       <React.Fragment>
@@ -595,11 +641,11 @@ class Home extends React.Component {
                     })}
                 </Form.Item>
               </Card>
-              <Card type="inner" title="正職設定">
+              <Card type="inner" title="員工設定">
                 <Form.Item
                   label={
                     <div className="label">
-                      員工
+                      正職
                       <Icon
                         type="plus-circle"
                         style={{ fontSize: "20px", marginLeft: "10px" }}
@@ -620,6 +666,31 @@ class Home extends React.Component {
                         showFullTimeModal: this.showFullTimeModal(idx)
                       };
                       return <FullTimeResItem key={idx} {...resProps} />;
+                    })}
+                </Form.Item>
+                <Form.Item
+                  label={
+                    <div className="label">
+                      兼職
+                      <Icon
+                        type="plus-circle"
+                        style={{ fontSize: "20px", marginLeft: "10px" }}
+                        onClick={this.props.addPartTimeRes}
+                      />
+                    </div>
+                  }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 10 }}
+                >
+                  {partTimeRes.length > 0 &&
+                    partTimeRes.map((res, idx) => {
+                      const resProps = {
+                        ...res,
+                        changePartTimeRes: this.props.changePartTimeRes(idx),
+                        deletePartTimeRes: this.props.deletePartTimeRes(idx),
+                        showPartTimeModal: this.showPartTimeModal(idx)
+                      };
+                      return <PartTimeResItem key={idx} {...resProps} />;
                     })}
                 </Form.Item>
               </Card>
@@ -706,6 +777,13 @@ class Home extends React.Component {
           handleCancel={() => this.setState({ openFulltimeModal: false })}
           itemIdx={this.state.currentFullTimeIdx}
           changeRes={this.props.changeFullTimeRes(this.state.currentFullTimeIdx)}
+        />
+        <PartTimeModal
+          visible={this.state.openPartTimeModal}
+          handleOk={() => this.setState({ openPartTimeModal: false })}
+          handleCancel={() => this.setState({ openPartTimeModal: false })}
+          itemIdx={this.state.currentPartTimeIdx}
+          changeRes={this.props.changePartTimeRes(this.state.currentPartTimeIdx)}
         />
       </React.Fragment>
     );
@@ -798,7 +876,7 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
         changeScheduleFields({
           fullTimeRes: [
             ...fields.fullTimeRes,
-            { name: "", schedulePrefers: [], timeOff: [] }
+            { name: "", timeOff: [] }
           ]
         })
       );
@@ -851,6 +929,41 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
           scheduleClassDefs: [
             ...fields.scheduleClassDefs.slice(0, index),
             ...fields.scheduleClassDefs.slice(index + 1)
+          ]
+        })
+      );
+    },
+    changePartTimeRes: index => payload => {
+      const newObj = {
+        ...fields.partTimeRes[index],
+        ...payload
+      };
+      return dispatch(
+        changeScheduleFields({
+          partTimeRes: [
+            ...fields.partTimeRes.slice(0, index),
+            newObj,
+            ...fields.partTimeRes.slice(index + 1)
+          ]
+        })
+      );
+    },
+    addPartTimeRes: () => {
+      return dispatch(
+        changeScheduleFields({
+          partTimeRes: [
+            ...fields.partTimeRes,
+            { name: "" }
+          ]
+        })
+      );
+    },
+    deletePartTimeRes: index => () => {
+      return dispatch(
+        changeScheduleFields({
+          partTimeRes: [
+            ...fields.partTimeRes.slice(0, index),
+            ...fields.partTimeRes.slice(index + 1)
           ]
         })
       );

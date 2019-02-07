@@ -18,6 +18,7 @@ const configureStore = () => {
         scheduleTimes: [],
         humanResDefs: [],
         fullTimeRes: [],
+        partTimeRes: [],
         scheduleClassDefs: []
       }
     }
