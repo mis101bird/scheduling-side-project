@@ -5,7 +5,7 @@ import reducer from './reducers'
 const win = window
 
 /**
- * fullTimeRes: { name, ..., includes: [], excludes: [], preferIncludes: [], preferExcludes: [] }
+ * fullTimeRes: { name, ..., [yyyy/mm/dd]: { includes: [], excludes: [], preferIncludes: [], preferExcludes: [] } }
  */
 const configureStore = () => {
   const initialState = {

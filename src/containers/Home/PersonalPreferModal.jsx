@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Card, Calendar, Icon, Row, Col, Select } from "antd";
+import { Modal, Button, Card, Calendar, Icon, Row, Col, Select, Badge } from "antd";
 import { connect } from "react-redux";
 import _get from "lodash/get";
 import moment from "moment";
@@ -9,20 +9,24 @@ const { Option, OptGroup } = Select;
 const SelectClassOrDef = ({
   idx,
   humanResDefs,
+  precised = false,
   scheduleClassDefs,
   deleteItem,
   changeItem
 }) => (
   <div style={{ width: '95%', display: "flex", marginTop: 5 }}>
     <div style={{ lineHeight: '29px' }}>{`${idx + 1}. `}</div>
-    <Select onChange={changeItem} style={{ margin: '0 10px 0 5px', flex: 1 }}>
-      <OptGroup label="日分配">
+    <Select onChange={changeItem} style={{ margin: '0 10px 0 5px', flex: 1 }} dropdownStyle={{ height: 100, overflow: 'scroll' }}>
+      {
+        !precised && (
+        <OptGroup label="日分配(含交集)">
         {humanResDefs
           .filter(def => !!def.name)
           .map(def => (
             <Option value={def.name}>{def.name}</Option>
           ))}
       </OptGroup>
+        )}
       <OptGroup label="班表">
         {scheduleClassDefs
           .filter(def => !!def.name)
@@ -86,6 +90,20 @@ class PersonalModal extends React.Component {
         >
           <Calendar
             fullscreen={false}
+            dateCellRender={(date) => {
+              const dateString = date.format('YYYY/MM/DD')
+              const { 
+                [dateString]: { 
+                  includes = [], 
+                  excludes = [], 
+                  preferIncludes = [], 
+                  preferExcludes = [] 
+              } = {} } = this.props.item
+              
+              if(includes.length !== 0 || excludes.length !== 0 || preferIncludes.length !== 0 || preferExcludes.length !== 0){
+                return (<Badge status='error' style={{ bottom: '39px', left: '20px' }} />)
+              }
+            }}
             onPanelChange={value => this.setState({ currentDate: value })}
             onSelect={value => this.setState({ currentDate: value })}
             value={this.state.currentDate}
@@ -100,11 +118,11 @@ class PersonalModal extends React.Component {
         </div>
         <Card
           type="inner"
-          title="確定情況 (ex. 我XXX日不上晚班)"
+          title="確定情況 (ex. 我XX日不上晚班)"
           style={{ marginBottom: 24 }}
         >
           <Row>
-            <Col span="12">
+            <Col span={12}>
               <div style={{ width: '100%' }}>
                 <Icon
                   type="check"
@@ -114,7 +132,7 @@ class PersonalModal extends React.Component {
                 <Icon
                   type="plus-circle"
                   style={{ fontSize: "20px", marginLeft: "10px" }}
-                  onClick={() => addCheckItem(this.state.currentDate)}
+                  onClick={() => addCheckItem(this.state.currentDate, 'includes')}
                 />
               </div>
               {this.props.item &&
@@ -126,14 +144,16 @@ class PersonalModal extends React.Component {
                       ...opt,
                       humanResDefs,
                       scheduleClassDefs,
-                      deleteItem: deleteCheckItem(this.state.currentDate, idx),
-                      changeItem: changeCheckItem(this.state.currentDate, idx)
+                      precised: true,
+                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'includes'),
+                      changeItem: changeCheckItem(this.state.currentDate, idx, 'includes')
                     };
                     return <SelectClassOrDef key={idx} {...defProps} />;
                   }
                 )}
             </Col>
-            <Col span="12" style={{ display: "flex", alignItems: "center" }}>
+            <Col span={12}>
+            <div style={{ width: '100%' }}>
               <Icon
                 type="cross"
                 style={{ fontSize: "20px", color: "#eb2f96" }}
@@ -142,12 +162,89 @@ class PersonalModal extends React.Component {
               <Icon
                 type="plus-circle"
                 style={{ fontSize: "20px", marginLeft: "10px" }}
+                onClick={() => addCheckItem(this.state.currentDate, 'excludes')}
               />
+              </div>
+              {this.props.item &&
+                _get(this.props.item, `${currentDateString}.excludes`, []) &&
+                _get(this.props.item, `${currentDateString}.excludes`, []).map(
+                  (opt, idx) => {
+                    const defProps = {
+                      idx,
+                      ...opt,
+                      humanResDefs,
+                      scheduleClassDefs,
+                      precised: true,
+                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'excludes'),
+                      changeItem: changeCheckItem(this.state.currentDate, idx, 'excludes')
+                    };
+                    return <SelectClassOrDef key={idx} {...defProps} />;
+                  }
+                )}
             </Col>
           </Row>
         </Card>
-        <Card type="inner" title='偏好 (ex. 我"希望"XXX日不上晚班)'>
-          HI
+        <Card type="inner" title='偏好 (ex. 我"希望"XX日不上晚班)'>
+        <Row>
+            <Col span={12}>
+              <div style={{ width: '100%' }}>
+                <Icon
+                  type="check"
+                  style={{ fontSize: "20px", color: "#52c41a" }}
+                />
+                希望上的班
+                <Icon
+                  type="plus-circle"
+                  style={{ fontSize: "20px", marginLeft: "10px" }}
+                  onClick={() => addCheckItem(this.state.currentDate, 'preferIncludes')}
+                />
+              </div>
+              {this.props.item &&
+                _get(this.props.item, `${currentDateString}.preferIncludes`, []) &&
+                _get(this.props.item, `${currentDateString}.preferIncludes`, []).map(
+                  (opt, idx) => {
+                    const defProps = {
+                      idx,
+                      ...opt,
+                      humanResDefs,
+                      scheduleClassDefs,
+                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'preferIncludes'),
+                      changeItem: changeCheckItem(this.state.currentDate, idx, 'preferIncludes')
+                    };
+                    return <SelectClassOrDef key={idx} {...defProps} />;
+                  }
+                )}
+            </Col>
+            <Col span={12}>
+            <div style={{ width: '100%' }}>
+              <Icon
+                type="cross"
+                style={{ fontSize: "20px", color: "#eb2f96" }}
+              />
+              不希望上的班
+              <Icon
+                type="plus-circle"
+                style={{ fontSize: "20px", marginLeft: "10px" }}
+                onClick={() => addCheckItem(this.state.currentDate, 'preferExcludes')}
+              />
+              </div>
+              {this.props.item &&
+                _get(this.props.item, `${currentDateString}.preferExcludes`, []) &&
+                _get(this.props.item, `${currentDateString}.preferExcludes`, []).map(
+                  (opt, idx) => {
+                    const defProps = {
+                      idx,
+                      ...opt,
+                      humanResDefs,
+                      scheduleClassDefs,
+                      deleteItem: deleteCheckItem(this.state.currentDate, idx, 'preferExcludes'),
+                      changeItem: changeCheckItem(this.state.currentDate, idx, 'preferExcludes')
+                    };
+                    return <SelectClassOrDef key={idx} {...defProps} />;
+                  }
+                )}
+            </Col>
+          </Row>
         </Card>
       </Modal>
     );
@@ -172,7 +269,7 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
   return {
     ...propsFromState,
     ...ownProps,
-    changeCheckItem: (calendarDay, idx) => value => {
+    changeCheckItem: (calendarDay, idx, key) => (value) => {
       const dayString = calendarDay.format("YYYY/MM/DD");
       const newObj = {
         ..._get(propsFromState, `item.${dayString}`, {}),
@@ -181,33 +278,33 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
       return ownProps.changeRes({
         [dayString]: {
           ..._get(propsFromState, `item.${dayString}`, {}),
-          includes: [
-            ..._get(propsFromState, `item.${dayString}.includes`, []).slice(0, idx),
+          [key]: [
+            ..._get(propsFromState, `item.${dayString}.${key}`, []).slice(0, idx),
             newObj,
-            ..._get(propsFromState, `item.${dayString}.includes`, []).slice(idx + 1)
+            ..._get(propsFromState, `item.${dayString}.${key}`, []).slice(idx + 1)
           ]
         }
       });
     },
-    deleteCheckItem: (calendarDay, idx) => () => {
+    deleteCheckItem: (calendarDay, idx, key) => () => {
       const dayString = calendarDay.format("YYYY/MM/DD");
       return ownProps.changeRes({
         [dayString]: {
           ..._get(propsFromState, `item.${dayString}`, {}),
-          includes: [
-            ..._get(propsFromState, `item.${dayString}.includes`, []).slice(0, idx),
-            ..._get(propsFromState, `item.${dayString}.includes`, []).slice(idx + 1)
+          [key]: [
+            ..._get(propsFromState, `item.${dayString}.${key}`, []).slice(0, idx),
+            ..._get(propsFromState, `item.${dayString}.${key}`, []).slice(idx + 1)
           ]
         }
       });
     },
-    addCheckItem: calendarDay => {
+    addCheckItem: (calendarDay, key) => {
       const dayString = calendarDay.format("YYYY/MM/DD");
       if (!propsFromState.item[dayString]) {
         return ownProps.changeRes({
           [dayString]: {
             ..._get(propsFromState, `item.${dayString}`, {}),
-            includes: [{ name: "" }]
+            [key]: [{ name: "" }]
           }
         });
       }
@@ -215,8 +312,8 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
       return ownProps.changeRes({
         [dayString]: {
           ..._get(propsFromState, `item.${dayString}`, {}),
-          includes: [
-            ..._get(propsFromState, `item.${dayString}.includes`, []),
+          [key]: [
+            ..._get(propsFromState, `item.${dayString}.${key}`, []),
             { name: "" }
           ]
         }

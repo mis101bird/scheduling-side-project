@@ -312,7 +312,7 @@ const ScheduleClassDefineItem = ({
       addonAfter="小時"
     />
     <div className="fullTimeFlex">
-      人力定義
+        日分配標籤
       <Select
         mode="multiple"
         placeholder="至少一個"
