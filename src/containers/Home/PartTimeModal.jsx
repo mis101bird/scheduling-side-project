@@ -8,6 +8,7 @@ const { Option, OptGroup } = Select;
 
 const SelectClassOrDef = ({
   idx,
+  name,
   humanResDefs,
   precised = false,
   scheduleClassDefs,
@@ -16,7 +17,7 @@ const SelectClassOrDef = ({
 }) => (
   <div style={{ width: '95%', display: "flex", marginTop: 5 }}>
     <div style={{ lineHeight: '29px' }}>{`${idx + 1}. `}</div>
-    <Select onChange={changeItem} style={{ margin: '0 10px 0 5px', flex: 1 }} dropdownStyle={{ height: 100, overflow: 'scroll' }}>
+    <Select value={name} onChange={(value) => changeItem({ name: value })} style={{ margin: '0 10px 0 5px', flex: 1 }} dropdownStyle={{ height: 100, overflow: 'scroll' }}>
       {
         !precised && (
         <OptGroup label="日分配(含交集)">
@@ -175,7 +176,7 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
     changeCheckItem: (calendarDay, idx, key) => (value) => {
       const dayString = calendarDay.format("YYYY/MM/DD");
       const newObj = {
-        ..._get(propsFromState, `item.${dayString}`, {}),
+        ..._get(propsFromState, `item.${dayString}.${key}[${idx}]`, {}),
         ...value
       };
       return ownProps.changeRes({

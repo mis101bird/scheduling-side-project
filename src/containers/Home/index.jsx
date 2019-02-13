@@ -21,15 +21,10 @@ import AppHeader from "../../components/AppHeader";
 import AppFooter from "../../components/AppFooter";
 import PersonalModal from "./PersonalPreferModal";
 import PartTimeModal from './PartTimeModal';
+import HandyCalendar from './HandyCalendar'
 import "./index.less";
 import moment from "moment";
-import {
-  formatFloat,
-  calcScheduleAllHour,
-  calcScheduleDayHour,
-  calcWorkingHour,
-  calcHourDiff
-} from "../../utils/briefCalcUtils";
+import ScheduleHandler from './scheduleHandler'
 import {
   changeScheduleFields,
   changeSchedulePeriodAndHolidaySelect
@@ -145,8 +140,8 @@ const FullTimeResItem = ({
       />
       <Row type="flex" style={{ marginLeft: "8px" }}>
         {timeOff.length > 0 &&
-          timeOff.map(day => (
-            <Tag color="geekblue" size="big" style={{ marginBottom: "4px" }}>
+          timeOff.map((day, idx) => (
+            <Tag key={idx} color="geekblue" size="big" style={{ marginBottom: "4px" }}>
               {day.format("YYYY/MM/DD")}
             </Tag>
           ))}
@@ -376,85 +371,22 @@ const ScheduleClassDefineItem = ({
   </Row>
 );
 
-const BriefCalcAlert = ({
-  scheduleHours = {},
-  totalFullTimeHours = {},
-  ...singleFullTimes
-}) => {
-  const { hours: schedules = 0 } = scheduleHours;
-  const { hours: fulltimes = 0 } = totalFullTimeHours;
-  const diffDays = (schedules - fulltimes) / 8; // 1天工作8h
-
-  // calc working average hours
-  const sumHours = Object.keys(singleFullTimes).reduce((sum, key) => {
-    const { hours = 0 } = singleFullTimes[key];
-    return sum + hours;
-  }, 0);
-  const averageWorkingHours = sumHours / Object.keys(singleFullTimes).length;
-
-  if (diffDays < -2) {
-    return (
-      <Alert
-        style={{ marginTop: "12px" }}
-        message="哇！粗估後，人力可能過剩！預期精確計算後，部分正職員工會無法做滿時數"
-        description={`排班時數(${schedules}) - 正職總時數(${fulltimes}) = ${schedules -
-          fulltimes}h`}
-        type="warning"
-        showIcon
-      />
-    );
-  } else if (diffDays < 1.5) {
-    return (
-      <Alert
-        style={{ marginTop: "12px" }}
-        message="排班時數和正職總時數接近！可能喬一喬，不需要找兼職就能應付排班了！"
-        description={`排班時數(${schedules}) - 正職總時數(${fulltimes}) = ${schedules -
-          fulltimes}h (大約${diffDays}日)`}
-        type="success"
-        showIcon
-      />
-    );
-  } else if (schedules - fulltimes - averageWorkingHours > 0) {
-    return (
-      <Alert
-        style={{ marginTop: "12px" }}
-        message="排班時數多出正職總時數太多！多到甚至能多請一個正職了！"
-        description={`排班時數(${schedules}) - 正職總時數(${fulltimes}) = ${schedules -
-          fulltimes}h`}
-        type="error"
-        showIcon
-      />
-    );
-  } else {
-    const diffRoundDays = diffDays > 1 ? Math.round(diffDays) : diffDays;
-    return (
-      <Alert
-        style={{ marginTop: "12px" }}
-        message="可能需要找兼職，才能符合排班時數需求唷！"
-        description={`排班時數(${schedules}) - 正職總時數(${fulltimes}) = ${schedules -
-          fulltimes}h (大約${diffRoundDays}日)`}
-        type="info"
-        showIcon
-      />
-    );
-  }
-};
-
 class Home extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       briefCalc: undefined,
+      startHandyCalc: false,
       openFulltimeModal: false,
       currentFullTimeIdx: undefined,
       openPartTimeModal: false,
-      currentPartTimeIdx: undefined
+      currentPartTimeIdx: undefined,
+      scheduleHandler: undefined
     };
 
     this.deleteSundayHoliday = this.deleteSundayHoliday.bind(this);
     this.deleteSaturdayHoliday = this.deleteSaturdayHoliday.bind(this);
-    this.calcBriefResource = this.calcBriefResource.bind(this);
     this.showFullTimeModal = this.showFullTimeModal.bind(this);
     this.showPartTimeModal = this.showPartTimeModal.bind(this);
   }
@@ -479,78 +411,8 @@ class Home extends React.Component {
     });
   }
 
-  calcBriefResource(e) {
-    e.preventDefault();
-    const {
-      fullTimeRes,
-      holidays,
-      scheduleTimes,
-      humanResDefs
-    } = this.props.fields;
-
-    if (
-      fullTimeRes.length === 0 ||
-      scheduleTimes.length !== 2 ||
-      humanResDefs.length === 0
-    )
-      return;
-
-    const scheduleDayCount =
-      moment.duration(scheduleTimes[1].diff(scheduleTimes[0])).asDays() + 1; // include the start day
-    const holidaysCount = holidays.length;
-
-    // 計算正職員工時數
-    const fullTimePeople = fullTimeRes.reduce(
-      (sum, res, idx) => {
-        const { name, timeOff = [] } = res;
-        const timeOffCount = timeOff.length;
-        const fullTimeHours = calcWorkingHour({
-          timeOff: timeOffCount,
-          holidays: holidaysCount,
-          schedule: scheduleDayCount
-        });
-        const sumHours = sum.totalFullTimeHours.hours + fullTimeHours;
-        return {
-          ...sum,
-          [`fullTimeHours[${idx}]`]: {
-            hours: fullTimeHours,
-            title: `[正職員工] ${name}的時數`,
-            description: `${fullTimeHours} 小時 ((排班日 - 特休日) X 8h)`
-          },
-          totalFullTimeHours: {
-            ...sum.totalFullTimeHours,
-            hours: sumHours,
-            description: `${sumHours} 小時 (所有正職員工時數加總)`
-          }
-        };
-      },
-      {
-        totalFullTimeHours: {
-          title: "[正職員工] 總時數",
-          description: "無設定正職員工",
-          hours: 0
-        }
-      }
-    );
-
-    // 計算排班時數
-    const scheduleOneDayHours = calcScheduleDayHour({ humanResDefs });
-    const scheduleHours = calcScheduleAllHour({
-      dayHours: scheduleOneDayHours,
-      schedules: scheduleDayCount,
-      holidays: holidaysCount
-    });
-
-    this.setState({
-      briefCalc: {
-        ...fullTimePeople,
-        scheduleHours: {
-          title: "[排班] 總時數",
-          description: `${scheduleHours} 小時 (根據每日人力分配 X 需上班天數)`,
-          hours: scheduleHours
-        }
-      }
-    });
+  calcScheduleDaysPriority(e) {
+    // calc schedule days order queue!!
   }
 
   showFullTimeModal(idx) {
@@ -641,6 +503,39 @@ class Home extends React.Component {
                     })}
                 </Form.Item>
               </Card>
+              <Card type="inner" title="排班類型">
+                <Form.Item
+                  label={
+                    <div className="label">
+                      類型
+                      <Icon
+                        type="plus-circle"
+                        style={{ fontSize: "20px", marginLeft: "10px" }}
+                        onClick={this.props.addScheduleClassDef}
+                      />
+                    </div>
+                  }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  {scheduleClassDefs.length > 0 &&
+                    scheduleClassDefs.map((classItem, idx) => {
+                      const classProps = {
+                        ...classItem,
+                        humanResDefs,
+                        changeScheduleClassDef: this.props.changeScheduleClassDef(
+                          idx
+                        ),
+                        deleteScheduleClassDef: this.props.deleteScheduleClassDef(
+                          idx
+                        )
+                      };
+                      return (
+                        <ScheduleClassDefineItem key={idx} {...classProps} />
+                      );
+                    })}
+                </Form.Item>
+              </Card>
               <Card type="inner" title="員工設定">
                 <Form.Item
                   label={
@@ -694,77 +589,28 @@ class Home extends React.Component {
                     })}
                 </Form.Item>
               </Card>
-              <Card type="inner" title="排班類型">
-                <Form.Item
-                  label={
-                    <div className="label">
-                      類型
-                      <Icon
-                        type="plus-circle"
-                        style={{ fontSize: "20px", marginLeft: "10px" }}
-                        onClick={this.props.addScheduleClassDef}
-                      />
-                    </div>
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  {scheduleClassDefs.length > 0 &&
-                    scheduleClassDefs.map((classItem, idx) => {
-                      const classProps = {
-                        ...classItem,
-                        humanResDefs,
-                        changeScheduleClassDef: this.props.changeScheduleClassDef(
-                          idx
-                        ),
-                        deleteScheduleClassDef: this.props.deleteScheduleClassDef(
-                          idx
-                        )
-                      };
-                      return (
-                        <ScheduleClassDefineItem key={idx} {...classProps} />
-                      );
-                    })}
-                </Form.Item>
-              </Card>
               <Card
                 type="inner"
                 title={
                   <div>
-                    淺計算
+                    互動計算
                     <Button
                       type="primary"
                       style={{ marginLeft: "10px" }}
-                      onClick={this.calcBriefResource}
+                      onClick={() => new Promise((resolve) => {
+                        const scheduleH = new ScheduleHandler(this.props.fields)
+                        return resolve(scheduleH)
+                      }).then((scheduleHandler) => this.setState({ startHandyCalc: true, scheduleHandler }))}
                     >
                       開始
                     </Button>
                   </div>
                 }
               >
-                {this.state.briefCalc ? (
-                  <div>
-                    <List
-                      bordered
-                      dataSource={Object.keys(this.state.briefCalc).map(
-                        key => ({
-                          key,
-                          ...this.state.briefCalc[key]
-                        })
-                      )}
-                      renderItem={(item, idx) => (
-                        <List.Item>
-                          <List.Item.Meta
-                            title={`[${idx + 1}] ${item.title}`}
-                            description={item.description}
-                          />
-                        </List.Item>
-                      )}
-                    />
-                    <BriefCalcAlert {...this.state.briefCalc} />
-                  </div>
+                {this.state.startHandyCalc ? (
+                    <HandyCalendar scheduleHandler={this.state.scheduleHandler} />
                 ) : (
-                  "粗略計算...1. 班表總時數, 2. 各正職員工時數, 3. 正職員工總時數"
+                  "歡迎使用互動式排班！"
                 )}
               </Card>
             </Card>
@@ -792,6 +638,7 @@ class Home extends React.Component {
 
 const mapStateToProps = state => {
   const { fields = {} } = state.home;
+  console.log('homeState', state.home)
   return {
     fields
   };

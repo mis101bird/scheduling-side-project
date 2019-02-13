@@ -1,8 +1,21 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import reducer from './reducers'
+import moment from 'moment'
+import _ from 'lodash'
+import homeStore from '../mock/store/easyHome'
 
 const win = window
+
+// For test
+const mockInitialState = {
+  app: {
+    accessToken: window.localStorage.getItem('accessToken'),
+  },
+  home: {
+    fields: homeStore
+  }
+}
 
 /**
  * fullTimeRes: { name, ..., [yyyy/mm/dd]: { includes: [], excludes: [], preferIncludes: [], preferExcludes: [] } }
@@ -35,7 +48,7 @@ const configureStore = () => {
     (win && win.devToolsExtension) ? win.devToolsExtension() : f => f,
   )
 
-  const store = createStore(reducer, initialState, storeEnhancers)
+  const store = createStore(reducer, process.env.MOCK == 1 ? mockInitialState : initialState, storeEnhancers)
 
   if (module.hot) {
     module.hot.accept('./reducers', () => {
