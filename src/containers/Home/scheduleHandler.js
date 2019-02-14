@@ -1,4 +1,12 @@
 import { List, Map } from "immutable";
+import moment from 'moment'
+import {
+  formatFloat,
+  calcScheduleAllHour,
+  calcScheduleDayHour,
+  calcWorkingHour,
+  calcHourDiff
+} from "../../utils/briefCalcUtils";
 
 // 數字越大越優先
 const LABEL_WEIGHT_MAP = {
@@ -12,20 +20,112 @@ const LABEL_WEIGHT_MAP = {
 class ScheduleHandler {
   constructor(fields) {
     // get holidays
-    const { holidays = [] } = fields
+    const { holidays = [], scheduleClassDefs = [] } = fields
+    this._scheduleClassDefs = List(scheduleClassDefs).groupBy(x => x.name)
     this._holidayList = holidays.map(holiday => holiday.date);
+    this._hourStore = this._calcDefaultTotalHours(fields);
     this._schedulePQ = this._calcSchedulePriorityQueue(fields);
+    this._finishedScheduleMap = Map(); // Map({ [YYYY/MM/DD]: {...} })
+    console.log(this._schedulePQ.toJS())
+  }
+
+  get hourStore(){
+    return this._hourStore;
   }
 
   get holidayList() {
     return this._holidayList;
   }
 
+  get finishedScheduleMap() {
+    return this._finishedScheduleMap;
+  }
+
+  set finishedScheduleMap(map) {
+    if(Map.isMap(map)){
+      this._finishedScheduleMap = map
+    }
+  }
+
   get schedulePQ() {
     return this._schedulePQ;
   }
 
-  _buildLabelObjByDate({ date, fullTimeRes, partTimeRes }) {
+  set schedulePQ(list) {
+    if(List.isList(list)){
+      this._schedulePQ = list
+    }
+  }
+
+  _calcDefaultTotalHours({ scheduleTimes = [], holidays = [], fullTimeRes = [], humanResDefs = [], partTimeRes = [] }){
+    const scheduleDayCount =
+      moment.duration(scheduleTimes[1].diff(scheduleTimes[0])).asDays() + 1; // include the start day
+    const holidaysCount = holidays.length;
+
+    // 計算正職員工時數
+    const fullTimePeople = fullTimeRes.reduce(
+      (sum, res, idx) => {
+        const { name, timeOff = [] } = res;
+        const timeOffCount = timeOff.length;
+        const fullTimeHours = calcWorkingHour({
+          timeOff: timeOffCount,
+          holidays: holidaysCount,
+          schedule: scheduleDayCount
+        });
+        const sumHours = sum.totalFullTime.defaultHours + fullTimeHours;
+        return {
+          ...sum,
+          [name]: {
+            defaultHours: fullTimeHours,
+            currentHours: 0
+          },
+          totalFullTimeHours: {
+            ...sum.totalFullTimeHours,
+            defaultHours: sumHours,
+            currentHours: 0
+          }
+        };
+      },
+      {
+        totalFullTime: {
+          defaultHours: 0,
+          currentHours: 0
+        }
+      }
+    );
+    // 兼職
+    const partTimePeople = partTimeRes.reduce(
+      (sum, res) => {
+        const { name } = res
+        return {
+          ...sum,
+          [name]: {
+            currentHours: 0
+          }
+        };
+      },
+      {}
+    );
+
+    // 計算排班時數
+    const scheduleOneDayHours = calcScheduleDayHour({ humanResDefs });
+    const scheduleHours = calcScheduleAllHour({
+      dayHours: scheduleOneDayHours,
+      schedules: scheduleDayCount,
+      holidays: holidaysCount
+    });
+
+    return Map({
+      ...fullTimePeople,
+      partTimes: partTimePeople,
+      schedule: {
+        defaultHours: scheduleHours,
+        currentHours: 0
+      }
+    })
+  }
+
+  _buildLabelObjByDate({ date, fullTimeRes, partTimeRes, scheduleClassDefs }) {
     const obj = {
       date,
       labels: List(),
@@ -34,7 +134,8 @@ class ScheduleHandler {
       excludes: List(),
       prioritys: List(),
       availables: List(),
-      timeOffs: List()
+      timeOffs: List(),
+      outputs: Map() // { peopleName: [A班] }
     };
 
     // 正職特休/確定要班表/確定不要班表
@@ -58,6 +159,12 @@ class ScheduleHandler {
           obj.labelScore =
             obj.labelScore + includes.length * LABEL_WEIGHT_MAP.includes;
           obj.includes = obj.includes.push({ name, includes });
+          obj.outputs = obj.outputs.set(name, List(includes.map(c => c.name)));
+          // calc total include hours to update _hourStore
+          const incHours = includes.reduce((sum, c) => {
+            return sum + this._scheduleClassDefs.get(c.name).first({ hours: 0 }).hours;
+          }, 0)
+          this._hourStore = this._hourStore.setIn([name, 'currentHours'], incHours)
           obj.labels = obj.labels.push("includes");
         }
         // excludes:
@@ -92,7 +199,7 @@ class ScheduleHandler {
 
   _calcSchedulePriorityQueue(fields) {
     // 1. get all date obj and its special situation from fields
-    const { holidays, scheduleTimes, fullTimeRes, partTimeRes } = fields;
+    const { holidays, scheduleTimes, fullTimeRes, partTimeRes, scheduleClassDefs } = fields;
 
     // 2. loop迴圈: dateStart --> dateEnd: 每個date檢查是否確定行程 + 做labels
     const currentDay = scheduleTimes[0].clone();
@@ -101,10 +208,11 @@ class ScheduleHandler {
     while (currentDay.isBefore(endDay, "day")) {
       pqList = pqList.push(
         this._buildLabelObjByDate({
-          date: currentDay,
+          date: currentDay.clone(),
           fullTimeRes,
           partTimeRes,
-          holidays
+          holidays,
+          scheduleClassDefs
         })
       );
       currentDay.add(1, "days");
@@ -115,7 +223,7 @@ class ScheduleHandler {
     const groupsPQList = pqList.groupBy(dateObj => dateObj.get("labelScore"));
 
     // output: [[label score 第一名高{ date: '', holiday: {}, labels: [], labelScore: X, rawMessage: {...} }, {}, {}], [...]]
-    return groupsPQList.toList();
+    return groupsPQList.toList().sortBy((f) => f.first().get('labelScore'));
   }
 }
 

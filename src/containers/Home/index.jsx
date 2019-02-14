@@ -20,11 +20,11 @@ import iconAntd from "../../assets/antd.png";
 import AppHeader from "../../components/AppHeader";
 import AppFooter from "../../components/AppFooter";
 import PersonalModal from "./PersonalPreferModal";
-import PartTimeModal from './PartTimeModal';
-import HandyCalendar from './HandyCalendar'
+import PartTimeModal from "./PartTimeModal";
+import HandyCalendar from "./HandyCalendar";
 import "./index.less";
 import moment from "moment";
-import ScheduleHandler from './scheduleHandler'
+import ScheduleHandler from "./scheduleHandler";
 import {
   changeScheduleFields,
   changeSchedulePeriodAndHolidaySelect
@@ -141,7 +141,12 @@ const FullTimeResItem = ({
       <Row type="flex" style={{ marginLeft: "8px" }}>
         {timeOff.length > 0 &&
           timeOff.map((day, idx) => (
-            <Tag key={idx} color="geekblue" size="big" style={{ marginBottom: "4px" }}>
+            <Tag
+              key={idx}
+              color="geekblue"
+              size="big"
+              style={{ marginBottom: "4px" }}
+            >
               {day.format("YYYY/MM/DD")}
             </Tag>
           ))}
@@ -340,7 +345,7 @@ const ScheduleClassDefineItem = ({
       addonAfter="小時"
     />
     <div className="fullTimeFlex">
-        日分配標籤
+      日分配標籤
       <Select
         mode="multiple"
         placeholder="至少一個"
@@ -597,10 +602,26 @@ class Home extends React.Component {
                     <Button
                       type="primary"
                       style={{ marginLeft: "10px" }}
-                      onClick={() => new Promise((resolve) => {
-                        const scheduleH = new ScheduleHandler(this.props.fields)
-                        return resolve(scheduleH)
-                      }).then((scheduleHandler) => this.setState({ startHandyCalc: true, scheduleHandler }))}
+                      onClick={() =>
+                        new Promise(resolve => {
+                          if (
+                            fullTimeRes.length === 0 ||
+                            scheduleTimes.length !== 2 ||
+                            humanResDefs.length === 0
+                          )
+                            return;
+
+                          const scheduleH = new ScheduleHandler(
+                            this.props.fields
+                          );
+                          return resolve(scheduleH);
+                        }).then(scheduleHandler =>
+                          this.setState({
+                            startHandyCalc: true,
+                            scheduleHandler
+                          })
+                        )
+                      }
                     >
                       開始
                     </Button>
@@ -608,7 +629,7 @@ class Home extends React.Component {
                 }
               >
                 {this.state.startHandyCalc ? (
-                    <HandyCalendar scheduleHandler={this.state.scheduleHandler} />
+                  <HandyCalendar scheduleHandler={this.state.scheduleHandler} />
                 ) : (
                   "歡迎使用互動式排班！"
                 )}
@@ -622,14 +643,18 @@ class Home extends React.Component {
           handleOk={() => this.setState({ openFulltimeModal: false })}
           handleCancel={() => this.setState({ openFulltimeModal: false })}
           itemIdx={this.state.currentFullTimeIdx}
-          changeRes={this.props.changeFullTimeRes(this.state.currentFullTimeIdx)}
+          changeRes={this.props.changeFullTimeRes(
+            this.state.currentFullTimeIdx
+          )}
         />
         <PartTimeModal
           visible={this.state.openPartTimeModal}
           handleOk={() => this.setState({ openPartTimeModal: false })}
           handleCancel={() => this.setState({ openPartTimeModal: false })}
           itemIdx={this.state.currentPartTimeIdx}
-          changeRes={this.props.changePartTimeRes(this.state.currentPartTimeIdx)}
+          changeRes={this.props.changePartTimeRes(
+            this.state.currentPartTimeIdx
+          )}
         />
       </React.Fragment>
     );
@@ -638,7 +663,7 @@ class Home extends React.Component {
 
 const mapStateToProps = state => {
   const { fields = {} } = state.home;
-  console.log('homeState', state.home)
+  console.log("homeState", state.home);
   return {
     fields
   };
@@ -721,10 +746,7 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
     addFullTimeRes: () => {
       return dispatch(
         changeScheduleFields({
-          fullTimeRes: [
-            ...fields.fullTimeRes,
-            { name: "", timeOff: [] }
-          ]
+          fullTimeRes: [...fields.fullTimeRes, { name: "", timeOff: [] }]
         })
       );
     },
@@ -798,10 +820,7 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
     addPartTimeRes: () => {
       return dispatch(
         changeScheduleFields({
-          partTimeRes: [
-            ...fields.partTimeRes,
-            { name: "" }
-          ]
+          partTimeRes: [...fields.partTimeRes, { name: "" }]
         })
       );
     },
