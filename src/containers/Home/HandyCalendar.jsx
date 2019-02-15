@@ -35,7 +35,9 @@ class HandyCalendar extends React.Component {
     const activeDateList = scheduleHandler.schedulePQ.last();
     this.state = {
       briefCalc: undefined,
-      activeDateMap: activeDateList.groupBy(obj => obj.get("date").format('YYYY/MM/DD')),
+      activeDateMap: activeDateList.groupBy(obj =>
+        obj.get("date").format("YYYY/MM/DD")
+      ),
       currentDate: scheduleTimes.length === 0 ? moment() : scheduleTimes[0]
     };
     // remove the last array
@@ -50,9 +52,9 @@ class HandyCalendar extends React.Component {
     const { scheduleHandler } = this.props;
     const activeDateList = scheduleHandler.schedulePQ.last();
 
-    if(!_List.isList(activeDateList)) return Map();
+    if (!_List.isList(activeDateList)) return Map();
     scheduleHandler.schedulePQ = scheduleHandler.schedulePQ.pop();
-    return activeDateList.groupBy(obj => obj.get("date").format('YYYY/MM/DD'));
+    return activeDateList.groupBy(obj => obj.get("date").format("YYYY/MM/DD"));
   }
 
   calcHumanResource() {
@@ -149,38 +151,50 @@ class HandyCalendar extends React.Component {
           </div>
         );
       }
-      
+
       // check date是否在activeDateMap { [date]: {...} } --> 有：轉轉轉花
       // check outputs (Map) 是否有東西了 --> 有：Badge
-      if (activeDateMap.has(date.format('YYYY/MM/DD'))) {
-        console.log(date.format('YYYY/MM/DD'))
-        const dateObj = activeDateMap.get(date.format('YYYY/MM/DD')).first();
+      if (activeDateMap.has(date.format("YYYY/MM/DD"))) {
+        console.log(date.format("YYYY/MM/DD"));
+        const dateObj = activeDateMap.get(date.format("YYYY/MM/DD")).first();
         const outputs = dateObj.get("outputs");
-        console.log(outputs)
+        console.log(outputs);
         return (
           <div className="dateWrapper">
-            <Spin size="large" style={{ margin: '3px 0 10px 3px' }} />
-            {outputs.size > 0 && outputs.map((classArray, key, idx) => (
-              <Badge
-                key={idx}
-                status="processing"
-                text={`${key}: ${classArray.join(", ")}`}
-              />
-            )).toList()}
+            <Spin size="large" style={{ margin: "3px 0 10px 3px" }} />
+            {outputs.size > 0 &&
+              outputs
+                .map((classArray, key, idx) => (
+                  <Badge
+                    key={idx}
+                    status="processing"
+                    text={`${key}: ${classArray.join(", ")}`}
+                  />
+                ))
+                .toList()}
           </div>
         );
       }
-      
+
       // date是否在finishedMap { [date]: {...} }
       // check outputs (Map) 是否有東西了 --> 有：Badge
-      if (finishedScheduleMap.has(date.format('YYYY/MM/DD'))) {
-        const dateObj = finishedScheduleMap.get(date.format('YYYY/MM/DD')).first();
+      if (finishedScheduleMap.has(date.format("YYYY/MM/DD"))) {
+        const dateObj = finishedScheduleMap
+          .get(date.format("YYYY/MM/DD"))
+          .first();
         const outputs = dateObj.get("outputs");
         return (
           <div className="dateWrapper">
-            {outputs.size > 0 && outputs.map((classArray, key, idx) => (
-              <Badge key={idx} status="error" text={`${key}: ${classArray.join(", ")}`} />
-            )).toList()}
+            {outputs.size > 0 &&
+              outputs
+                .map((classArray, key, idx) => (
+                  <Badge
+                    key={idx}
+                    status="error"
+                    text={`${key}: ${classArray.join(", ")}`}
+                  />
+                ))
+                .toList()}
           </div>
         );
       }
@@ -197,11 +211,16 @@ class HandyCalendar extends React.Component {
       scheduleHandler
     } = this.props;
     const currentDateString = this.state.currentDate.format("YYYY/MM/DD");
+    const hourStore = scheduleHandler.hourStore;
     return (
       <Row type="flex" className="handy-calendar">
-        <Button onClick={() => {
-          this.setState({ activeDateMap: this.calcNewActiveDateMap() })
-        }}>下一檔</Button>
+        <Button
+          onClick={() => {
+            this.setState({ activeDateMap: this.calcNewActiveDateMap() });
+          }}
+        >
+          下一檔
+        </Button>
         <div
           style={{
             width: "100%",
@@ -254,18 +273,22 @@ class HandyCalendar extends React.Component {
           <List
             span={4}
             bordered
-            dataSource={Object.keys(this.state.briefCalc).map(key => ({
-              key,
-              ...this.state.briefCalc[key]
-            }))}
-            renderItem={(item, idx) => (
-              <List.Item>
-                <List.Item.Meta
-                  title={`[${idx + 1}] ${item.title}`}
-                  description={item.description}
-                />
-              </List.Item>
-            )}
+            dataSource={hourStore.toList()}
+            renderItem={(item, idx) => {
+              const { title, defaultHours = 0, currentHours } = item;
+              return (
+                <List.Item>
+                  <List.Item.Meta
+                    title={`${idx + 1}. ${title}`}
+                    description={`目前時數： ${
+                      defaultHours !== 0
+                        ? `${currentHours}/${defaultHours}`
+                        : `${currentHours}`
+                    }`}
+                  />
+                </List.Item>
+              );
+            }}
           />
         </Col>
       </Row>

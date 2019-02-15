@@ -30,6 +30,7 @@ class ScheduleHandler {
   }
 
   get hourStore(){
+    console.log('this._hourStore', this._hourStore.toJS())
     return this._hourStore;
   }
 
@@ -76,11 +77,12 @@ class ScheduleHandler {
         return {
           ...sum,
           [name]: {
+            title: `正職 ${name}`,
             defaultHours: fullTimeHours,
             currentHours: 0
           },
-          totalFullTimeHours: {
-            ...sum.totalFullTimeHours,
+          totalFullTime: {
+            ...sum.totalFullTime,
             defaultHours: sumHours,
             currentHours: 0
           }
@@ -88,6 +90,7 @@ class ScheduleHandler {
       },
       {
         totalFullTime: {
+          title: '正職總時數',
           defaultHours: 0,
           currentHours: 0
         }
@@ -99,7 +102,8 @@ class ScheduleHandler {
         const { name } = res
         return {
           ...sum,
-          [name]: {
+          [`partTime/${name}`]: {
+            title: `兼職 ${name}`,
             currentHours: 0
           }
         };
@@ -117,8 +121,9 @@ class ScheduleHandler {
 
     return Map({
       ...fullTimePeople,
-      partTimes: partTimePeople,
+      ...partTimePeople,
       schedule: {
+        title: "排班所需總時數",
         defaultHours: scheduleHours,
         currentHours: 0
       }
@@ -162,7 +167,7 @@ class ScheduleHandler {
           obj.outputs = obj.outputs.set(name, List(includes.map(c => c.name)));
           // calc total include hours to update _hourStore
           const incHours = includes.reduce((sum, c) => {
-            return sum + this._scheduleClassDefs.get(c.name).first({ hours: 0 }).hours;
+            return sum + parseFloat(this._scheduleClassDefs.get(c.name).first({ hours: 0 }).hours);
           }, 0)
           this._hourStore = this._hourStore.setIn([name, 'currentHours'], incHours)
           obj.labels = obj.labels.push("includes");
