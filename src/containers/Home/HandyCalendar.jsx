@@ -10,15 +10,11 @@ import {
   Select,
   List,
   Badge,
-  Spin
+  Spin,
+  Form,
+  Checkbox,
+  Tree
 } from "antd";
-import {
-  formatFloat,
-  calcScheduleAllHour,
-  calcScheduleDayHour,
-  calcWorkingHour,
-  calcHourDiff
-} from "../../utils/briefCalcUtils";
 import { connect } from "react-redux";
 import _get from "lodash/get";
 import { List as _List, Map } from "immutable";
@@ -26,7 +22,110 @@ import _findIndex from "lodash/findIndex";
 import moment from "moment";
 import "./HandyCalendar.less";
 
-// 一個date設定完 --> 更新 --> 將activeDateMap內的該dateObj放到finishMap (交換)
+const CheckboxGroup = Checkbox.Group;
+const { TreeNode } = Tree;
+
+const treeData = [{
+  title: '0-0',
+  key: '0-0',
+  disabled: true,
+  children: [{
+    title: '0-0-0',
+    key: '0-0-0'
+  }, {
+    title: '0-0-1',
+    key: '0-0-1'
+  }, {
+    title: '0-0-2',
+    key: '0-0-2'
+  }],
+}, {
+  title: '0-1',
+  key: '0-1',
+  children: [
+    { title: '0-1-0-0', key: '0-1-0-0' },
+    { title: '0-1-0-1', key: '0-1-0-1' },
+    { title: '0-1-0-2', key: '0-1-0-2' }
+  ],
+}];
+
+// 1. 算出班表排列組合
+// 2. 照人力 Grouping
+// 3. 分配人力
+class ScheduleDetailSetting extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentFullTime: props.fullTimeRes.map(item => item.name),
+      currentPartTime: [],
+      currentSchedule: []
+    };
+  }
+
+  renderTreeNodes(data){
+    return data.map((item) => {
+    const { disabled, ...others } = item
+    if (item.children) {
+      return (
+        <TreeNode disableCheckbox={!!disabled} title={item.title} key={item.key} dataRef={item}>
+          {this.renderTreeNodes(item.children)}
+        </TreeNode>
+      );
+    }
+    return <TreeNode disableCheckbox={!!disabled} {...others} />;
+    })
+  }
+
+  // 指定負責人要SelectBox都填了才能button active
+  // currentFullTime和currentPartTime一變化 --> Group變
+  // currentSchedule變化 --> 更新！指定負責人清空
+  render() {
+    const {
+      dateData,
+      fullTimeRes,
+      fields
+    } = this.props;
+    return (
+      <React.Fragment>
+        <Form.Item label="正職">
+          <CheckboxGroup
+            options={fullTimeRes.map(item => item.name)}
+            value={this.state.currentFullTime}
+            onChange={checkedList => {
+              this.setState({ currentFullTime: checkedList /*Group變*/ });
+            }}
+          />
+        </Form.Item>
+        {dateData.get("availables", Map({})).size !== 0 && (
+          <Form.Item label="兼職">
+            <CheckboxGroup
+              options={dateData.get("availables").map(item => item.name)}
+              value={this.state.currentPartTime}
+              onChange={checkedList => {
+                this.setState({ currentPartTime: checkedList /*Group變*/ });
+              }}
+            />
+          </Form.Item>
+        )}
+        <Form.Item label='符合需求的班表組合'>
+        <Tree
+        checkable
+        defaultExpandAll
+
+        onSelect={this.onSelect}
+        onCheck={this.onCheck}
+      >
+        {this.renderTreeNodes(treeData)}
+      </Tree>
+        </Form.Item>
+        <Form.Item label='指定負責人'>
+            Hello
+        </Form.Item>
+      </React.Fragment>
+    );
+  }
+}
+
 class HandyCalendar extends React.Component {
   constructor(props) {
     super(props);
@@ -34,18 +133,21 @@ class HandyCalendar extends React.Component {
 
     const activeDateList = scheduleHandler.schedulePQ.last();
     this.state = {
-      briefCalc: undefined,
       activeDateMap: activeDateList.groupBy(obj =>
         obj.get("date").format("YYYY/MM/DD")
       ),
-      currentDate: scheduleTimes.length === 0 ? moment() : scheduleTimes[0]
+      currentDate:
+        scheduleTimes.length === 0
+          ? Map({ date: moment() })
+          : activeDateList.first(),
+      availableNext: false
     };
     // remove the last array
     scheduleHandler.schedulePQ = scheduleHandler.schedulePQ.pop();
 
-    this.calcHumanResource = this.calcHumanResource.bind(this);
     this.calcDateCellRender = this.calcDateCellRender.bind(this);
     this.calcNewActiveDateMap = this.calcNewActiveDateMap.bind(this);
+    this.nextSchedule = this.nextSchedule.bind(this);
   }
 
   calcNewActiveDateMap() {
@@ -54,80 +156,11 @@ class HandyCalendar extends React.Component {
 
     if (!_List.isList(activeDateList)) return Map();
     scheduleHandler.schedulePQ = scheduleHandler.schedulePQ.pop();
-    return activeDateList.groupBy(obj => obj.get("date").format("YYYY/MM/DD"));
-  }
-
-  calcHumanResource() {
-    const {
-      fullTimeRes,
-      holidays,
-      scheduleTimes,
-      humanResDefs
-    } = this.props.fields;
-
-    if (
-      fullTimeRes.length === 0 ||
-      scheduleTimes.length !== 2 ||
-      humanResDefs.length === 0
-    )
-      return;
-
-    const scheduleDayCount =
-      moment.duration(scheduleTimes[1].diff(scheduleTimes[0])).asDays() + 1; // include the start day
-    const holidaysCount = holidays.length;
-
-    // 計算正職員工時數
-    const fullTimePeople = fullTimeRes.reduce(
-      (sum, res, idx) => {
-        const { name, timeOff = [] } = res;
-        const timeOffCount = timeOff.length;
-        const fullTimeHours = calcWorkingHour({
-          timeOff: timeOffCount,
-          holidays: holidaysCount,
-          schedule: scheduleDayCount
-        });
-        const sumHours = sum.totalFullTimeHours.hours + fullTimeHours;
-        return {
-          ...sum,
-          [`fullTimeHours[${idx}]`]: {
-            hours: fullTimeHours,
-            title: `[正職員工] ${name}的時數`,
-            description: `${fullTimeHours} 小時 ((排班日 - 特休日) X 8h)`
-          },
-          totalFullTimeHours: {
-            ...sum.totalFullTimeHours,
-            hours: sumHours,
-            description: `${sumHours} 小時 (所有正職員工時數加總)`
-          }
-        };
-      },
-      {
-        totalFullTimeHours: {
-          title: "[正職員工] 總時數",
-          description: "無設定正職員工",
-          hours: 0
-        }
-      }
-    );
-
-    // 計算排班時數
-    const scheduleOneDayHours = calcScheduleDayHour({ humanResDefs });
-    const scheduleHours = calcScheduleAllHour({
-      dayHours: scheduleOneDayHours,
-      schedules: scheduleDayCount,
-      holidays: holidaysCount
-    });
-
-    this.setState({
-      briefCalc: {
-        ...fullTimePeople,
-        scheduleHours: {
-          title: "[排班] 總時數",
-          description: `${scheduleHours} 小時 (根據每日人力分配 X 需上班天數)`,
-          hours: scheduleHours
-        }
-      }
-    });
+    return {
+      activeDateMap: activeDateList.groupBy(obj =>
+        obj.get("date").format("YYYY/MM/DD")
+      )
+    };
   }
 
   calcDateCellRender(date) {
@@ -201,16 +234,40 @@ class HandyCalendar extends React.Component {
     }
   }
 
-  componentWillMount() {
-    this.calcHumanResource();
+  nextSchedule() {
+    const { scheduleHandler } = this.props;
+    const { currentDate, activeDateMap } = this.state;
+    scheduleHandler.finishedScheduleMap = scheduleHandler.finishedScheduleMap.push(
+      currentDate
+    );
+    // no next currentDate in activeDateMap
+    if (activeDateMap.size === 0) {
+      const { activeDateMap: newActiveDateMap } = this.calcNewActiveDateMap();
+      this.setState({
+        availableNext: false,
+        activeDateMap: newActiveDateMap,
+        currentDate: newActiveDateMap.first()
+      });
+    } else {
+      const newActiveDateMap = activeDateMap.delete(
+        currentDate.get("date").format("YYYY/MM/DD")
+      );
+      this.setState({
+        availableNext: false,
+        activeDateMap: newActiveDateMap,
+        currentDate: newActiveDateMap.first()
+      });
+    }
   }
 
   render() {
     const {
-      fields: { scheduleTimes = [], humanResDefs = [], scheduleClassDefs = [] },
+      fields: { scheduleTimes = [], humanResDefs = [], scheduleClassDefs = [], fullTimeRes = [] },
       scheduleHandler
     } = this.props;
-    const currentDateString = this.state.currentDate.format("YYYY/MM/DD");
+    const currentDateString = this.state.currentDate
+      .get("date")
+      .format("YYYY/MM/DD");
     const hourStore = scheduleHandler.hourStore;
     return (
       <Row type="flex" className="handy-calendar">
@@ -231,9 +288,21 @@ class HandyCalendar extends React.Component {
         >
           <Calendar
             dateCellRender={this.calcDateCellRender}
-            onPanelChange={value => this.setState({ currentDate: value })}
-            onSelect={value => this.setState({ currentDate: value })}
-            value={this.state.currentDate}
+            onPanelChange={value =>
+              this.setState({
+                currentDate:
+                  this.state.activeDateMap.get(value.format("YYYY/MM/DD")) ||
+                  Map({ date: value })
+              })
+            }
+            onSelect={value =>
+              this.setState({
+                currentDate:
+                  this.state.activeDateMap.get(value.format("YYYY/MM/DD")) ||
+                  Map({ date: value })
+              })
+            }
+            value={this.state.currentDate.get("date")}
             disabledDate={currentDate => {
               if (scheduleTimes.length === 0) return true;
 
@@ -263,10 +332,20 @@ class HandyCalendar extends React.Component {
         <Col span={20}>
           <Card
             type="inner"
-            title="排班挑選"
-            style={{ marginTop: 0, marginLeft: 0, height: "100%" }}
+            title={`排班挑選 ${this.state.currentDate
+              .get("date")
+              .format("YYYY/MM/DD")}`}
+            extra={
+              <Button
+                disabled={!this.state.availableNext}
+                onClick={() => console.log("HI")}
+              >
+                下一個排班
+              </Button>
+            }
+            style={{ marginTop: 0, marginLeft: 0 }}
           >
-            Hello
+            <ScheduleDetailSetting fields={this.props.fields} dateData={this.state.currentDate} fullTimeRes={fullTimeRes} />
           </Card>
         </Col>
         <Col span={4}>

@@ -5,7 +5,8 @@ import {
   calcScheduleAllHour,
   calcScheduleDayHour,
   calcWorkingHour,
-  calcHourDiff
+  calcHourDiff,
+  getCombinationByHumanRes
 } from "../../utils/briefCalcUtils";
 
 // 數字越大越優先
@@ -20,17 +21,20 @@ const LABEL_WEIGHT_MAP = {
 class ScheduleHandler {
   constructor(fields) {
     // get holidays
-    const { holidays = [], scheduleClassDefs = [] } = fields
+    const { holidays = [], scheduleClassDefs = [], humanResDefs } = fields
     this._scheduleClassDefs = List(scheduleClassDefs).groupBy(x => x.name)
     this._holidayList = holidays.map(holiday => holiday.date);
     this._hourStore = this._calcDefaultTotalHours(fields);
     this._schedulePQ = this._calcSchedulePriorityQueue(fields);
     this._finishedScheduleMap = Map(); // Map({ [YYYY/MM/DD]: {...} })
-    console.log(this._schedulePQ.toJS())
+    this._classesCombination = getCombinationByHumanRes(scheduleClassDefs, humanResDefs)
+  }
+
+  get classesCombination(){
+    return this._classesCombination;
   }
 
   get hourStore(){
-    console.log('this._hourStore', this._hourStore.toJS())
     return this._hourStore;
   }
 
