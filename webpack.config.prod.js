@@ -32,8 +32,8 @@ module.exports = merge(common, {
     ],
   },
   output: {
-    publicPath: '/',
-    path: path.resolve(__dirname, 'dist'),
+    publicPath: './',
+    path: path.resolve(__dirname, 'docs'),
     filename: '[name].[chunkhash].js',
   },
   devtool: 'source-map',
@@ -61,7 +61,7 @@ module.exports = merge(common, {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin(['docs']),
     new CopyWebpackPlugin([{
       from: 'public/',
     }]),
