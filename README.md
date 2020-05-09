@@ -1,8 +1,13 @@
-# React Starter
+# Scheduling side project
 
-> A demo Project of using the latest react + redux + antd + react-router to make a real world admin portal
+> A Project of using the latest react + redux + antd + react-router to make a real world admin portal
 
 <img src="https://raw.githubusercontent.com/bichenkk/react-starter/master/github/screenshot.png">
+
+## Deploy to github page
+
+1. Run `npm run build` to generate docs files
+2. Update repo setting: `GitHub Pages > master branch /docs folder`
 
 ## Package
 

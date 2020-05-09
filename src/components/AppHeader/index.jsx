@@ -57,9 +57,9 @@ class CustomisedHeader extends React.Component {
           style={{ lineHeight: '64px' }}
           onClick={this.handleMenuItemOnClick}
         >
-          { !isLoggedIn && <Menu.Item key='login'>登入</Menu.Item> }
-          { isLoggedIn && <Menu.Item key='admin'>管理者</Menu.Item> }
-          { isLoggedIn && <Menu.Item key='logout'>登出</Menu.Item> }
+          { /* !isLoggedIn && <Menu.Item key='login'>登入</Menu.Item> */ }
+          { /* isLoggedIn && <Menu.Item key='admin'>管理者</Menu.Item> */ }
+          { /* isLoggedIn && <Menu.Item key='logout'>登出</Menu.Item> */ }
         </Menu>
       </Header>
     )
