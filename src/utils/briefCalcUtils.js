@@ -1,11 +1,6 @@
 import moment from "moment";
 import { List, Map, is } from "immutable";
 
-export const formatFloat = (num, pos) => {
-  const size = Math.pow(10, pos);
-  return Math.round(num * size) / size;
-};
-
 export const calcWorkingHour = ({
   timeOff = 0,
   holidays = 0,

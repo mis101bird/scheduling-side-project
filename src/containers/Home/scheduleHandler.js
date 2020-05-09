@@ -1,14 +1,12 @@
 import { List, Map } from "immutable";
 import moment from 'moment'
 import {
-  formatFloat,
   calcScheduleAllHour,
   calcScheduleDayHour,
   calcWorkingHour,
   calcHourDiff,
   getCombinationByHumanRes
 } from "../../utils/briefCalcUtils";
-
 // 數字越大越優先
 const LABEL_WEIGHT_MAP = {
   partTime: -1, // 兼職能上班
