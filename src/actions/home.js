@@ -2,7 +2,7 @@ import * as ActionTypes from '../constants/actionTypes'
 import moment from 'moment'
 
 function fetchHolidayAPI() {
-   return fetch('http://localhost:3000/holidays').then(result => result.json());
+   return fetch('http://140.121.102.153:1880/holidays').then(result => result.json());
 }
 
 
